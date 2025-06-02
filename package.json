@@ -11,7 +11,7 @@
     "lint": "lerna run lint --stream --no-bail",
     "lint-fix": "lerna run lint-fix --stream --no-bail",
     "check-types": "lerna run check-types --stream --no-bail",
-    "build": "npm run build -w @gen-epix/tools-lib && npm run build -w @gen-epix/reconfigure-package && npm run build -w @gen-epix/generate-license-manifest && npm run build -w @gen-epix/oidc-mock-server",
+    "build-all": "npm run build -w @gen-epix/tools-lib && npm run build -w @gen-epix/reconfigure-package && npm run build -w @gen-epix/generate-license-manifest && npm run build -w @gen-epix/oidc-mock-server && npm run build -w @gen-epix/generate-api",
     "clean": "lerna clean && rm -fr node_modules",
     "validate-all": "npm run lint && npm run check-types",
     "generate-license-manifest": "generate-license-manifest packages/demo-client/public",
