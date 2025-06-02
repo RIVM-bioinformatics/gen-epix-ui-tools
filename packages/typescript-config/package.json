@@ -1,0 +1,9 @@
+  {
+    "name": "@gen-epix/typescript-config",
+    "version": "0.0.1",
+    "license": "UNLICENSED",
+    "main": "tsconfig.json",
+    "dependencies": {
+      "typescript": "5.8.3"
+    }
+  }

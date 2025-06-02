@@ -1,0 +1,33 @@
+{
+  "name": "@gen-epix/tools-lib",
+  "version": "0.0.1",
+  "license": "EUPL-1.2",
+  "type": "module",
+  "files": [
+    "dist"
+  ],
+  "main": "dist/index.js",
+  "typings": "dist/index.d.ts",
+  "scripts": {
+    "lint": "eslint ./src --report-unused-disable-directives --max-warnings 0",
+    "check-types": "tsc --noemit",
+    "build": "rimraf ./dist && rollup -c"
+  },
+  "dependencies": {
+    "findup-sync": "5.0.0",
+    "fs-extra": "11.3.0"
+  },
+  "devDependencies": {
+    "@gen-epix/eslint-config": "*",
+    "@gen-epix/typescript-config": "*",
+    "@types/findup-sync": "4.0.5",
+    "@types/fs-extra": "11.0.4",
+    "@types/node": "22.15.23",
+    "eslint": "9.27.0",
+    "typescript": "5.8.3",
+    "rimraf": "6.0.1",
+    "rollup": "4.41.1",
+    "rollup-plugin-dts": "6.2.1",
+    "rollup-plugin-esbuild": "6.2.1"
+  }
+}

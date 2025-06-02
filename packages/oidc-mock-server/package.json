@@ -1,0 +1,37 @@
+{
+  "name": "@gen-epix/oidc-mock-server",
+  "version": "0.0.4",
+  "license": "EUPL-1.2",
+  "files": [
+    "bin"
+  ],
+  "main": "bin/oidc-mock-server.js",
+  "typings": "bin/oidc-mock-server.d.ts",
+  "type": "module",
+  "scripts": {
+    "start": "nodemon",
+    "build": "rimraf ./bin && rollup -c && chmod +x ./bin/oidc-mock-server.js"
+  },
+  "bin": {
+    "oidc-mock-server": "bin/oidc-mock-server.js"
+  },
+  "dependencies": {
+    "@gen-epix/tools-lib": "*",
+    "basic-auth": "2.0.1",
+    "oauth2-mock-server": "8.0.0",
+    "fs-extra": "11.3.0"
+  },
+  "devDependencies": {
+    "@gen-epix/eslint-config": "*",
+    "@gen-epix/typescript-config": "*",
+    "@types/basic-auth": "1.1.8",
+    "@types/node": "22.15.23",
+    "eslint": "9.27.0",
+    "nodemon": "3.1.10",
+    "typescript": "5.8.3",
+    "vite-node": "3.1.4",
+    "rimraf": "6.0.1",
+    "rollup": "4.41.1",
+    "rollup-plugin-esbuild": "6.2.1"
+  }
+}

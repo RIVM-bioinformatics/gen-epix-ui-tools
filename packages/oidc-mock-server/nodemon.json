@@ -1,0 +1,7 @@
+{
+  "watch": [
+    "src"
+  ],
+  "ext": "ts",
+  "exec": "vite-node --loader ts-node/esm ./src/oidc-mock-server.ts"
+}

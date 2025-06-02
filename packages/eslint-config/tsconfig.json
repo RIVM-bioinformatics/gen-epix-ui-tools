@@ -1,0 +1,14 @@
+{
+  "$schema": "http://json.schemastore.org/tsconfig",
+  "extends": "@gen-epix/typescript-config/tsconfig.node.json",
+  "compilerOptions": {
+    "allowJs": true,
+    "types": [
+      "vitest/globals"
+    ]
+  },
+  "include": [
+    "src/**/*",
+    "eslint.config.js"
+  ]
+}
