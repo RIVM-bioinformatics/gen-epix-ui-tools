@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 import * as path from 'path';
 import {
   existsSync,
@@ -5,14 +6,11 @@ import {
   rmSync,
   unlinkSync,
   writeFileSync,
+  cpSync,
+  mkdirSync,
 } from 'fs';
 import { execSync } from 'child_process';
 import { tmpdir } from 'os';
-
-import {
-  ensureDirSync,
-  copySync,
-} from 'fs-extra';
 
 import { findGitRootPath } from '@gen-epix/tools-lib';
 
@@ -50,7 +48,7 @@ fetchOpenApiJson('https://127.0.0.1:8000/openapi.json').catch((error) => {
   // STEP 2: run the openapi-generator-cli to generate the API client
   const generatedApiTargetDir = path.join(tempDir, 'generated');
   const openApiGeneratorCliBinPath = path.join(findGitRootPath(), 'node_modules', '.bin', 'openapi-generator-cli');
-  const openApiGeneratorCommand = `${openApiGeneratorCliBinPath} generate -i ${sanitizedOpenApiJsonPath} -g typescript-axios --additional-properties="enumPropertyNaming=original -o ${generatedApiTargetDir}`;
+  const openApiGeneratorCommand = `${openApiGeneratorCliBinPath} generate -i ${sanitizedOpenApiJsonPath} -g typescript-axios --additional-properties="enumPropertyNaming=original" -o ${generatedApiTargetDir}`;
 
   console.log('Running command:', openApiGeneratorCommand);
   execSync(openApiGeneratorCommand, { stdio: 'inherit' });
@@ -61,12 +59,16 @@ fetchOpenApiJson('https://127.0.0.1:8000/openapi.json').catch((error) => {
   sanitizeCommonTs(path.join(generatedApiTargetDir, 'common.ts'));
   sanitizeConfigurationTs(path.join(generatedApiTargetDir, 'configuration.ts'));
   sanitizeBaseTs(path.join(generatedApiTargetDir, 'base.ts'));
-  sanitizeApiTs(path.join(generatedApiTargetDir, 'api.ts'));
+  sanitizeApiTs(path.join(generatedApiTargetDir, 'api.ts'), ['Subject', 'Filter'], 'Epi');
 
   // STEP 4: copy the generated files to the target directory
-
+  console.log('Ensuring target directory exists:', targetDir);
   // Ensure the target directory exists
-  ensureDirSync(targetDir);
+
+  if (!existsSync(targetDir)) {
+    console.log(`Creating target directory: ${targetDir}`);
+    mkdirSync(targetDir);
+  }
   // Copy files to destination
   ['index.ts', 'api.ts', 'base.ts', 'common.ts', 'configuration.ts'].forEach((filename) => {
     if (existsSync(path.join(targetDir, filename))) {
@@ -75,7 +77,7 @@ fetchOpenApiJson('https://127.0.0.1:8000/openapi.json').catch((error) => {
     }
     console.log(`Copying ${filename} to ${targetDir}`);
     // Copy the file from the generated API target directory to the target directory
-    copySync(path.join(generatedApiTargetDir, filename), path.join(targetDir, filename));
+    cpSync(path.join(generatedApiTargetDir, filename), path.join(targetDir, filename));
   });
 
   // STEP 5: clean up the temporary directory

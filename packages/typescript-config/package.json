@@ -1,9 +1,9 @@
   {
     "name": "@gen-epix/typescript-config",
-    "version": "0.0.1",
+    "version": "0.0.2",
     "license": "UNLICENSED",
     "main": "tsconfig.json",
-    "dependencies": {
-      "typescript": "5.8.3"
+    "peerDependencies": {
+      "typescript": "^5.8.3"
     }
   }

@@ -18,8 +18,7 @@
   "dependencies": {
     "@gen-epix/tools-lib": "*",
     "basic-auth": "2.0.1",
-    "oauth2-mock-server": "8.0.0",
-    "fs-extra": "11.3.0"
+    "oauth2-mock-server": "8.0.0"
   },
   "devDependencies": {
     "@gen-epix/eslint-config": "*",

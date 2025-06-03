@@ -18,13 +18,11 @@
     "generate-license-manifest": "bin/generate-license-manifest.js"
   },
   "dependencies": {
-    "@gen-epix/tools-lib": "*",
-    "fs-extra": "11.3.0"
+    "@gen-epix/tools-lib": "*"
   },
   "devDependencies": {
     "@gen-epix/eslint-config": "*",
     "@gen-epix/typescript-config": "*",
-    "@types/fs-extra": "11.0.4",
     "@types/node": "22.15.23",
     "eslint": "9.27.0",
     "typescript": "5.8.3",

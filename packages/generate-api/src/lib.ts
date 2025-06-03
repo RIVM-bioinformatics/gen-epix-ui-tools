@@ -145,10 +145,10 @@ export const sanitizeConfigurationTs = (configurationTsPath: string): void => {
 
 export const sanitizeBaseTs = (baseTsPath: string): void => {
   sanitizeTs(baseTsPath, content => content
-    .replace('/* tslint:disable */\n/* eslint-disable */', '/* eslint-disable */\n// @ts-nocheck')
+    .replace('/* tslint:disable */\n/* eslint-disable */', '/* eslint-disable */')
     .replace(/export const BASE_PATH.*/, 'export const BASE_PATH = "";')
     .replace('import type { Configuration }', 'import { Configuration }')
-    .replace(`import type { AxiosPromise, AxiosInstance, AxiosRequestConfig } from 'axios';`, `import type { AxiosPromise, AxiosInstance, AxiosRequestConfig, InternalAxiosRequestConfig, AxiosResponse } from 'axios';`)
+    .replace(`import type { AxiosPromise, AxiosInstance, AxiosRequestConfig } from 'axios';`, `import type { AxiosInstance, AxiosRequestConfig, AxiosResponse, InternalAxiosRequestConfig } from 'axios';`)
     .replace(/export class BaseAPI {[\s\S]*};/gm, `export class BaseAPI {
     public static defaultRequestTimeout: number;
     public static baseUrl: string;
@@ -187,17 +187,18 @@ export const sanitizeBaseTs = (baseTsPath: string): void => {
 `));
 };
 
-export const sanitizeApiTs = (apiTsPath: string): void => {
-  sanitizeTs(apiTsPath, content => content
-    .replace('/* tslint:disable */\n/* eslint-disable */', '/* eslint-disable */\n// @ts-nocheck')
-    .replace(/export const (.*?)ApiAxiosParamCreator/g, 'const $1ApiAxiosParamCreator')
-    .replace(/BASE_PATH, configuration/g, 'configuration')
-    .replace(/export const (.*?)ApiFp/g, 'const $1ApiFp')
-    // NOTE: disable the use of cascading because of cash invalidation problems
-    .replace(/cascade\?: boolean/g, 'cascade?: false')
-    .replace(/Enum|enum/g, '')
-    .replace('setApiKeyToObject, setBasicAuthToObject, setBearerAuthToObject, setOAuthToObject, ', '')
-    .replace(/export const (.*)ApiFactory[\s\S]*?object-oriented interface/g, `
+export const sanitizeApiTs = (apiTsPath: string, reservedWords: string[], reservedWordPrefix: string): void => {
+  sanitizeTs(apiTsPath, content => {
+    let newContent = content
+      .replace('/* tslint:disable */\n/* eslint-disable */', '/* eslint-disable */\n// @ts-nocheck')
+      .replace(/export const (.*?)ApiAxiosParamCreator/g, 'const $1ApiAxiosParamCreator')
+      .replace(/BASE_PATH, configuration/g, 'configuration')
+      .replace(/export const (.*?)ApiFp/g, 'const $1ApiFp')
+      // NOTE: disable the use of cascading because of cash invalidation problems
+      .replace(/cascade\?: boolean/g, 'cascade?: false')
+      .replace(/Enum|enum/g, '')
+      .replace('setApiKeyToObject, setBasicAuthToObject, setBearerAuthToObject, setOAuthToObject, ', '')
+      .replace(/export const (.*)ApiFactory[\s\S]*?object-oriented interface/g, `
 /**
  * $1Api - object-oriented interface
 `).replace(/export class (.*)Api extends BaseAPI {/g, `export class $1Api extends BaseAPI {
@@ -206,5 +207,13 @@ export const sanitizeApiTs = (apiTsPath: string): void => {
     this.instance = this.instance || new $1Api();
     return this.instance;
   }
-`).replace(/this\.basePath/g, 'this.configuration.baseUrl'));
+`).replace(/this\.basePath/g, 'this.configuration.baseUrl');
+
+    reservedWords.forEach(word => {
+      const regex = new RegExp(`\\b${word}\\b`, 'g');
+      newContent = newContent.replace(regex, `${reservedWordPrefix}${String(word).charAt(0).toUpperCase() + String(word).slice(1)}`);
+    });
+
+    return newContent;
+  });
 };

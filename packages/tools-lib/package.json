@@ -14,14 +14,12 @@
     "build": "rimraf ./dist && rollup -c"
   },
   "dependencies": {
-    "findup-sync": "5.0.0",
-    "fs-extra": "11.3.0"
+    "findup-sync": "5.0.0"
   },
   "devDependencies": {
     "@gen-epix/eslint-config": "*",
     "@gen-epix/typescript-config": "*",
     "@types/findup-sync": "4.0.5",
-    "@types/fs-extra": "11.0.4",
     "@types/node": "22.15.23",
     "eslint": "9.27.0",
     "typescript": "5.8.3",

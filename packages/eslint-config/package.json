@@ -1,11 +1,14 @@
 {
   "name": "@gen-epix/eslint-config",
-  "version": "0.0.1",
+  "version": "0.0.3",
   "license": "EUPL-1.2",
   "main": "src/eslint.config.js",
   "type": "module",
   "scripts": {
     "release": "npm run semantic-release"
+  },
+  "peerDependencies": {
+    "eslint": "^9.27.0"
   },
   "dependencies": {
     "@eslint/js": "9.27.0",
@@ -15,8 +18,7 @@
     "@typescript-eslint/parser": "8.33.0",
     "@typescript-eslint/utils": "8.33.0",
     "@vitest/eslint-plugin": "1.2.1",
-    "eslint": "9.27.0",
-    "eslint-import-resolver-typescript": "4.4.1",
+    "eslint-import-resolver-typescript": "4.4.2",
     "eslint-plugin-eslint-comments": "3.2.0",
     "eslint-plugin-import": "2.31.0",
     "eslint-plugin-import-newlines": "1.4.0",
