@@ -1,5 +1,5 @@
 {
-  "name": "gen-epic-ui-monorepo",
+  "name": "@gen-epix/ui-tools",
   "version": "0.0.1",
   "packageManager": "npm@11.4.1",
   "license": "EUPL-1.2",

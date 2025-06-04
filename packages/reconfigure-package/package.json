@@ -2,6 +2,15 @@
   "name": "@gen-epix/reconfigure-package",
   "version": "0.0.2",
   "license": "EUPL-1.2",
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/RIVM-bioinformatics/gen-epix-ui-tools.git",
+    "directory": "packages/reconfigure-package"
+  },
+  "author": "RIVM-bioinformatics <ids-bioinformatics@rivm.nl>",
   "type": "module",
   "files": [
     "bin"

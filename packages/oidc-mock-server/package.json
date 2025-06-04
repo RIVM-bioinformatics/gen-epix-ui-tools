@@ -2,6 +2,15 @@
   "name": "@gen-epix/oidc-mock-server",
   "version": "0.0.1",
   "license": "EUPL-1.2",
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/RIVM-bioinformatics/gen-epix-ui-tools.git",
+    "directory": "packages/oidc-mock-server"
+  },
+  "author": "RIVM-bioinformatics <ids-bioinformatics@rivm.nl>",
   "files": [
     "bin"
   ],

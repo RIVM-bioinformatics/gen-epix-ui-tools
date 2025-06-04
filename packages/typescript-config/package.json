@@ -1,7 +1,16 @@
   {
     "name": "@gen-epix/typescript-config",
     "version": "0.0.2",
-    "license": "UNLICENSED",
+    "license": "EUPL-1.2",
+    "publishConfig": {
+      "access": "public"
+    },
+    "repository": {
+      "type": "git",
+      "url": "https://github.com/RIVM-bioinformatics/gen-epix-ui-tools.git",
+      "directory": "packages/generate-api"
+    },
+    "author": "RIVM-bioinformatics <ids-bioinformatics@rivm.nl>",
     "main": "tsconfig.json",
     "peerDependencies": {
       "typescript": "^5.8.3"

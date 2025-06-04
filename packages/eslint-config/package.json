@@ -2,6 +2,15 @@
   "name": "@gen-epix/eslint-config",
   "version": "0.0.3",
   "license": "EUPL-1.2",
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/RIVM-bioinformatics/gen-epix-ui-tools.git",
+    "directory": "packages/eslint-config"
+  },
+  "author": "RIVM-bioinformatics <ids-bioinformatics@rivm.nl>",
   "main": "src/eslint.config.js",
   "type": "module",
   "scripts": {
