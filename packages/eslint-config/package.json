@@ -1,6 +1,6 @@
 {
   "name": "@gen-epix/eslint-config",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "license": "EUPL-1.2",
   "publishConfig": {
     "access": "public"
@@ -17,7 +17,7 @@
     "release": "npm run semantic-release"
   },
   "peerDependencies": {
-    "eslint": "^9.27.0"
+    "eslint": "^9.0.0"
   },
   "dependencies": {
     "@eslint/js": "9.27.0",
