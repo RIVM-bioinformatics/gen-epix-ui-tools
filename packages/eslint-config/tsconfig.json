@@ -3,9 +3,6 @@
   "extends": "@gen-epix/typescript-config/tsconfig.node.json",
   "compilerOptions": {
     "allowJs": true,
-    "types": [
-      "vitest/globals"
-    ]
   },
   "include": [
     "src/**/*",
