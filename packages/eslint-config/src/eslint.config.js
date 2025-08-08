@@ -82,7 +82,7 @@ const jsRules = {
     'single',
     {
       avoidEscape: true,
-      allowTemplateLiterals: true,
+      allowTemplateLiterals: 'always',
     },
   ],
   '@stylistic/quote-props': ['error', 'as-needed'],
