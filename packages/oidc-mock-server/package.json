@@ -33,10 +33,10 @@
     "@gen-epix/eslint-config": "*",
     "@gen-epix/typescript-config": "*",
     "@types/basic-auth": "1.1.8",
-    "@types/node": "24.2.0",
-    "eslint": "9.32.0",
+    "@types/node": "24.2.1",
+    "eslint": "9.33.0",
     "nodemon": "3.1.10",
-    "typescript": "5.8.3",
+    "typescript": "5.9.2",
     "rimraf": "6.0.1",
     "rollup": "4.46.2",
     "rollup-plugin-esbuild": "6.2.1"

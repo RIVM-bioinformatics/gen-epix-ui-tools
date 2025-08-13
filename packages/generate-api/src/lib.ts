@@ -148,7 +148,7 @@ export const sanitizeBaseTs = (baseTsPath: string): void => {
     .replace('/* tslint:disable */\n/* eslint-disable */', '/* eslint-disable */')
     .replace(/export const BASE_PATH.*/, 'export const BASE_PATH = "";')
     .replace('import type { Configuration }', 'import { Configuration }')
-    .replace(`import type { AxiosPromise, AxiosInstance, AxiosRequestConfig } from 'axios';`, `import type { AxiosInstance, AxiosRequestConfig, AxiosResponse, InternalAxiosRequestConfig } from 'axios';`)
+    .replace(`import type { AxiosPromise, AxiosInstance, RawAxiosRequestConfig } from 'axios';`, `import type { AxiosPromise, AxiosInstance, RawAxiosRequestConfig, InternalAxiosRequestConfig, AxiosResponse } from 'axios';`)
     .replace(/export class BaseAPI {[\s\S]*};/gm, `export class BaseAPI {
     public static defaultRequestTimeout: number;
     public static baseUrl: string;

@@ -31,8 +31,8 @@
   "devDependencies": {
     "@gen-epix/eslint-config": "*",
     "@gen-epix/typescript-config": "*",
-    "@types/node": "24.2.0",
-    "typescript": "5.8.3",
+    "@types/node": "24.2.1",
+    "typescript": "5.9.2",
     "vite-node": "3.2.4",
     "rimraf": "6.0.1",
     "rollup": "4.46.2",
