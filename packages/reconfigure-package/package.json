@@ -1,6 +1,6 @@
 {
   "name": "@gen-epix/reconfigure-package",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "license": "EUPL-1.2",
   "publishConfig": {
     "access": "public"
@@ -32,11 +32,11 @@
   "devDependencies": {
     "@gen-epix/eslint-config": "*",
     "@gen-epix/typescript-config": "*",
-    "@types/node": "24.2.1",
+    "@types/node": "24.3.0",
     "typescript": "5.9.2",
     "vite-node": "3.2.4",
     "rimraf": "6.0.1",
-    "rollup": "4.46.2",
+    "rollup": "4.46.4",
     "rollup-plugin-esbuild": "6.2.1"
   }
 }
