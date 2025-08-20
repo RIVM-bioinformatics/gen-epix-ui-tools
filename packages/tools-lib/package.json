@@ -1,6 +1,6 @@
 {
   "name": "@gen-epix/tools-lib",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "license": "EUPL-1.2",
   "publishConfig": {
     "access": "public"
@@ -11,6 +11,7 @@
     "directory": "packages/tools-lib"
   },
   "author": "RIVM-bioinformatics <ids-bioinformatics@rivm.nl>",
+  "homepage": "https://github.com/RIVM-bioinformatics/gen-epix",
   "type": "module",
   "files": [
     "dist"

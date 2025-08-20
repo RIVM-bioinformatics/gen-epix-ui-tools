@@ -1,6 +1,6 @@
 {
   "name": "@gen-epix/generate-license-manifest",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "license": "EUPL-1.2",
   "publishConfig": {
     "access": "public"
@@ -11,6 +11,7 @@
     "directory": "packages/generate-license-manifest"
   },
   "author": "RIVM-bioinformatics <ids-bioinformatics@rivm.nl>",
+  "homepage": "https://github.com/RIVM-bioinformatics/gen-epix",
   "type": "module",
   "files": [
     "bin"
