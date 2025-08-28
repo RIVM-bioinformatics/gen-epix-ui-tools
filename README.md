@@ -1,3 +1,7 @@
+<p align="center">
+    <img src="./docs/assets/gen-epix_logo_full.svg" alt="gen-epix-logo" width=600>
+</p>
+
 # Gen-EpiX UI Tools
 
 This is a collection of general purpose tools to support Gen-Epix frontend development and deployment.
