@@ -1,7 +1,17 @@
 {
   "name": "@gen-epix/oidc-mock-server",
-  "version": "0.0.1",
+  "version": "0.0.4",
   "license": "EUPL-1.2",
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/RIVM-bioinformatics/gen-epix-ui-tools.git",
+    "directory": "packages/oidc-mock-server"
+  },
+  "author": "RIVM-bioinformatics <ids-bioinformatics@rivm.nl>",
+  "homepage": "https://github.com/RIVM-bioinformatics/gen-epix",
   "files": [
     "bin"
   ],
@@ -18,18 +28,18 @@
   "dependencies": {
     "@gen-epix/tools-lib": "*",
     "basic-auth": "2.0.1",
-    "oauth2-mock-server": "8.0.0"
+    "oauth2-mock-server": "8.1.0"
   },
   "devDependencies": {
     "@gen-epix/eslint-config": "*",
     "@gen-epix/typescript-config": "*",
     "@types/basic-auth": "1.1.8",
-    "@types/node": "22.15.23",
-    "eslint": "9.27.0",
+    "@types/node": "24.3.0",
+    "eslint": "9.33.0",
     "nodemon": "3.1.10",
-    "typescript": "5.8.3",
+    "typescript": "5.9.2",
     "rimraf": "6.0.1",
-    "rollup": "4.41.1",
+    "rollup": "4.46.4",
     "rollup-plugin-esbuild": "6.2.1"
   }
 }

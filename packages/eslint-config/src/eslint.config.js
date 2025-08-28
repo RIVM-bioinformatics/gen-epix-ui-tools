@@ -75,14 +75,14 @@ const jsRules = {
       allowSingleLine: false,
     },
   ],
-  '@stylistic/func-call-spacing': ['error', 'never'],
+  '@stylistic/function-call-spacing': ['error', 'never'],
   '@stylistic/indent': ['error', 2],
   '@stylistic/quotes': [
     'error',
     'single',
     {
       avoidEscape: true,
-      allowTemplateLiterals: true,
+      allowTemplateLiterals: 'always',
     },
   ],
   '@stylistic/quote-props': ['error', 'as-needed'],

@@ -1,7 +1,17 @@
 {
   "name": "@gen-epix/reconfigure-package",
-  "version": "0.0.2",
+  "version": "0.0.5",
   "license": "EUPL-1.2",
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/RIVM-bioinformatics/gen-epix-ui-tools.git",
+    "directory": "packages/reconfigure-package"
+  },
+  "author": "RIVM-bioinformatics <ids-bioinformatics@rivm.nl>",
+  "homepage": "https://github.com/RIVM-bioinformatics/gen-epix",
   "type": "module",
   "files": [
     "bin"
@@ -22,11 +32,11 @@
   "devDependencies": {
     "@gen-epix/eslint-config": "*",
     "@gen-epix/typescript-config": "*",
-    "@types/node": "22.15.23",
-    "typescript": "5.8.3",
-    "vite-node": "3.1.4",
+    "@types/node": "24.3.0",
+    "typescript": "5.9.2",
+    "vite-node": "3.2.4",
     "rimraf": "6.0.1",
-    "rollup": "4.41.1",
+    "rollup": "4.46.4",
     "rollup-plugin-esbuild": "6.2.1"
   }
 }
