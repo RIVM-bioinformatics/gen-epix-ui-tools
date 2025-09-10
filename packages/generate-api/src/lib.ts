@@ -21,6 +21,7 @@ const sanitizeJsonAttributes = (leaf: JSONObject): JSONObject => {
     delete leaf.default;
     delete leaf.const;
     delete leaf.uniqueItems;
+    delete leaf.propertyNames;
     for (const key in leaf) {
       const value = leaf[key];
 
