@@ -102,7 +102,9 @@ const jsRules = {
   ],
   '@stylistic/quote-props': ['error', 'as-needed'],
   '@stylistic/object-curly-spacing': ['error', 'always'],
-  '@stylistic/no-multi-spaces': ['error'],
+  '@stylistic/no-multi-spaces': ['error', {
+    ignoreEOLComments: true,
+  }],
   '@stylistic/block-spacing': ['error', 'always'],
   '@stylistic/new-parens': ['error', 'always'],
   '@stylistic/no-extra-semi': ['error'],
@@ -165,7 +167,6 @@ const jsRules = {
   '@stylistic/jsx-newline': ['error', { prevent: true }],
   '@stylistic/jsx-one-expression-per-line': ['error'],
   '@stylistic/jsx-pascal-case': ['error'],
-  '@stylistic/jsx-props-no-multi-spaces': ['error'],
   '@stylistic/jsx-quotes': ['error', 'prefer-single'],
   '@stylistic/jsx-self-closing-comp': ['error'],
   'react/jsx-sort-props': 'off', // replaced by @stylistic/jsx-sort-props

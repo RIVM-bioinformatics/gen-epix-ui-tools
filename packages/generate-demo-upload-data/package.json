@@ -1,0 +1,43 @@
+{
+  "name": "@gen-epix/generate-demo-upload-data",
+  "version": "0.0.1",
+  "license": "EUPL-1.2",
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/RIVM-bioinformatics/gen-epix-ui-tools.git",
+    "directory": "packages/generate-demo-upload-data"
+  },
+  "author": "RIVM-bioinformatics <ids-bioinformatics@rivm.nl>",
+  "homepage": "https://github.com/RIVM-bioinformatics/gen-epix",
+  "type": "module",
+  "files": [
+    "bin"
+  ],
+  "main": "bin/generate-demo-upload-data.js",
+  "scripts": {
+    "lint": "eslint ./src --report-unused-disable-directives --max-warnings 0",
+    "check-types": "tsc --noemit",
+    "generate-demo-upload-data": "vite-node --loader ts-node/esm ./src/generate-demo-upload-data.ts",
+    "build": "rimraf ./bin && rollup -c && chmod +x ./bin/generate-demo-upload-data.js"
+  },
+  "bin": {
+    "generate-demo-upload-data": "bin/generate-demo-upload-data.js"
+  },
+  "dependencies": {
+    "@gen-epix/tools-lib": "*",
+    "read-excel-file": "6.0.1"
+  },
+  "devDependencies": {
+    "@gen-epix/eslint-config": "*",
+    "@gen-epix/typescript-config": "*",
+    "@types/node": "24.3.1",
+    "typescript": "5.9.2",
+    "vite-node": "3.2.4",
+    "rimraf": "6.0.1",
+    "rollup": "4.50.1",
+    "rollup-plugin-esbuild": "6.2.1"
+  }
+}
