@@ -70,13 +70,18 @@ const jsRules = {
     'error',
     1,
   ],
-  '@stylistic/type-annotation-spacing': [
-    'error',
-    {
-      before: false,
-      after: true,
-    },
-  ],
+  // BUG in @stylistic/type-annotation-spacing causes incorrect errors
+  // '@stylistic/type-annotation-spacing': [
+  //   'error',
+  //   {
+  //     before: false,
+  //     after: true,
+  //     arrow: {
+  //       before: true,
+  //       after: true,
+  //     },
+  //   },
+  // ],
   '@stylistic/arrow-spacing': ['error', { before: true, after: true }],
   '@stylistic/member-delimiter-style': ['error'],
   '@stylistic/semi': [
@@ -248,6 +253,9 @@ const jsRules = {
   'import/no-cycle': ['error', { ignoreExternal: false, maxDepth: 3 }],
 
   // plugin: react-hooks
+  'react-hooks/set-state-in-effect': ['off'], // to many false positives
+  'react-hooks/immutability': ['off'], // to many false positives
+  'react-hooks/preserve-manual-memoization': ['off'], // to many false positives
   'react-hooks/rules-of-hooks': ['error'],
   'react-hooks/exhaustive-deps': ['error', {
     additionalHooks: 'useCleanupCallback',
