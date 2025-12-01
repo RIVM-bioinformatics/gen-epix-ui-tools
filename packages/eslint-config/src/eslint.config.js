@@ -6,7 +6,6 @@ import pluginImport from 'eslint-plugin-import';
 import pluginImportNewlines from 'eslint-plugin-import-newlines';
 import pluginPreferArrow from 'eslint-plugin-prefer-arrow';
 import pluginReact from 'eslint-plugin-react';
-// eslint-disable-next-line import/default
 import pluginReactHooks from 'eslint-plugin-react-hooks';
 import pluginReactRefresh from 'eslint-plugin-react-refresh';
 import pluginJsxA11y from 'eslint-plugin-jsx-a11y';
@@ -76,9 +75,9 @@ const jsRules = {
     {
       before: false,
       after: true,
-      overrides: { arrow: { before: true, after: true } },
     },
   ],
+  '@stylistic/arrow-spacing': ['error', { before: true, after: true }],
   '@stylistic/member-delimiter-style': ['error'],
   '@stylistic/semi': [
     'error',

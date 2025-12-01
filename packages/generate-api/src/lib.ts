@@ -8,7 +8,7 @@ import fetch from 'node-fetch';
 import type { OpenAPIV3_1 } from 'openapi-types';
 
 
-export type JSONObject = | null | boolean | string | number | JSONObject[] | { [key: string]: JSONObject };
+export type JSONObject = boolean | string | number | JSONObject[] | { [key: string]: JSONObject };
 export type AnyOfItem = { type: string; nullable: boolean; $ref: string };
 export type AnyOfLeaf = AnyOfItem[];
 
