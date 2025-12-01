@@ -203,10 +203,10 @@ export const sanitizeApiTs = (apiTsPath: string, reservedWords: string[], reserv
 /**
  * $1Api - object-oriented interface
 `).replace(/export class (.*)Api extends BaseAPI {/g, `export class $1Api extends BaseAPI {
-  public static instance: $1Api;
-  public static getInstance(): $1Api {
-    this.instance = this.instance || new $1Api();
-    return this.instance;
+  private static __instance: $1Api;
+  public static get instance(): $1Api {
+    $1Api.__instance = $1Api.__instance || new $1Api();
+    return $1Api.__instance;
   }
 `).replace(/this\.basePath/g, 'this.configuration.baseUrl');
 
