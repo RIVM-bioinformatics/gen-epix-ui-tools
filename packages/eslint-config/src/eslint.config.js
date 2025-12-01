@@ -65,6 +65,7 @@ const jsRules = {
   'no-void': ['error', {
     allowAsStatement: true,
   }],
+  'prefer-template': ['error'],
   'no-redeclare': ['error'],
   'import-newlines/enforce': [
     'error',
