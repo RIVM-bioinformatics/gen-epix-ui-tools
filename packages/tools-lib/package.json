@@ -31,10 +31,10 @@
     "@gen-epix/typescript-config": "*",
     "@types/findup-sync": "4.0.5",
     "@types/node": "24.10.1",
-    "eslint": "9.39.1",
+    "eslint": "9.39.2",
     "typescript": "5.9.3",
     "rimraf": "6.1.2",
-    "rollup": "4.53.3",
+    "rollup": "4.57.0",
     "rollup-plugin-dts": "6.3.0",
     "rollup-plugin-esbuild": "6.2.1"
   }

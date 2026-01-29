@@ -34,11 +34,11 @@
     "@gen-epix/eslint-config": "*",
     "@gen-epix/typescript-config": "*",
     "@types/node": "24.10.1",
-    "eslint": "9.39.1",
+    "eslint": "9.39.2",
     "typescript": "5.9.3",
-    "vite-node": "5.2.0",
+    "vite-node": "5.3.0",
     "rimraf": "6.1.2",
-    "rollup": "4.53.3",
+    "rollup": "4.57.0",
     "rollup-plugin-esbuild": "6.2.1"
   }
 }

@@ -7,14 +7,17 @@ import basicAuth from 'basic-auth';
 
 import { findGitRootPath } from '@gen-epix/tools-lib';
 import { existsSync, readFileSync } from 'fs';
+import express, { json, urlencoded, type RequestHandler } from 'express';
+
+type User = {
+  email: string;
+  sub: string;
+  first_name: string;
+  last_name: string;
+}
 
 type Config = {
-  user: {
-    email: string;
-    sub: string;
-    first_name: string;
-    last_name: string;
-  }
+  user: User;
   port: number;
   token_time_out_seconds: number;
   scope: string;
@@ -46,10 +49,6 @@ if (!existsSync(certPemPath)) {
 
 const config = JSON.parse(readFileSync(configFilePath, 'utf-8')) as Config;
 
-if (!config.user || !config.user.email || !config.user.sub || !config.user.first_name || !config.user.last_name) {
-  console.error('Invalid configuration: user, email, and sub are required.');
-  process.exit(1);
-}
 
 if (!config.port) {
   console.warn(`Port not specified, using default port ${DEFAULT_PORT}.`);
@@ -61,8 +60,7 @@ if (!config.scope) {
   console.warn(`Scope not specified, using default scope "${DEFAULT_SCOPE}".`);
 }
 
-
-const USER = config.user;
+let user = { ...config.user ?? {} };
 const PORT = config.port ?? DEFAULT_PORT;
 const TOKEN_TIME_OUT_SECONDS = config.token_time_out_seconds ?? DEFAULT_TOKEN_TIME_OUT_SECONDS;
 const SCOPE = config.scope ?? DEFAULT_SCOPE;
@@ -130,14 +128,14 @@ const start = async () => {
     token.payload.aud = clientId;
     token.payload.exp = exp();
     token.payload.scope = SCOPE;
-    const userCopy = { ...USER };
+    const userCopy = { ...user };
     delete userCopy.email;
     Object.assign(token.payload, userCopy);
   });
 
   server.service.on('beforeUserinfo', (userInfoResponse: Response) => {
     console.log('Serving userinfo');
-    userInfoResponse.body = USER;
+    userInfoResponse.body = user;
     userInfoResponse.statusCode = 200;
   });
 
@@ -150,6 +148,80 @@ const start = async () => {
       exp: exp(),
     };
   });
+  const requestHandler = (server.service as unknown as { requestHandler: express.Express }).requestHandler;
+
+  // Middleware for parsing JSON and URL-encoded data
+  requestHandler.use(json());
+  requestHandler.use(urlencoded({ extended: true }));
+
+  requestHandler.post('/set-user', (req, res) => {
+    try {
+      const updatedUser = req.body as Partial<User>;
+
+      // Validate that at least one field is provided
+      if (!updatedUser || Object.keys(updatedUser).length === 0) {
+        return res.status(400).json({
+          error: 'Bad Request',
+          message: 'Request body must contain at least one user field to update'
+        });
+      }
+
+      // Validate field types and update user object
+      if (updatedUser.email !== undefined) {
+        if (typeof updatedUser.email !== 'string' || !updatedUser.email.trim()) {
+          return res.status(400).json({
+            error: 'Bad Request',
+            message: 'Email must be a non-empty string'
+          });
+        }
+        user.email = updatedUser.email.trim();
+      }
+
+      if (updatedUser.sub !== undefined) {
+        if (typeof updatedUser.sub !== 'string' || !updatedUser.sub.trim()) {
+          return res.status(400).json({
+            error: 'Bad Request',
+            message: 'Sub must be a non-empty string'
+          });
+        }
+        user.sub = updatedUser.sub.trim();
+      }
+
+      if (updatedUser.first_name !== undefined) {
+        if (typeof updatedUser.first_name !== 'string' || !updatedUser.first_name.trim()) {
+          return res.status(400).json({
+            error: 'Bad Request',
+            message: 'First name must be a non-empty string'
+          });
+        }
+        user.first_name = updatedUser.first_name.trim();
+      }
+
+      if (updatedUser.last_name !== undefined) {
+        if (typeof updatedUser.last_name !== 'string' || !updatedUser.last_name.trim()) {
+          return res.status(400).json({
+            error: 'Bad Request',
+            message: 'Last name must be a non-empty string'
+          });
+        }
+        user.last_name = updatedUser.last_name.trim();
+      }
+
+      console.log('User updated:', user);
+
+      res.status(200).json({
+        message: 'User updated successfully',
+        user: { ...user }
+      });
+    } catch (error) {
+      console.error('Error updating user:', error);
+      res.status(500).json({
+        error: 'Internal Server Error',
+        message: 'Failed to update user'
+      });
+    }
+  });
+
 
   // Start the server
   await server.start(PORT, '127.0.0.1');
