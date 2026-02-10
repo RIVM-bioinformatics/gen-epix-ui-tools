@@ -1,7 +1,7 @@
 {
   "name": "@gen-epix/ui-tools",
   "version": "0.0.1",
-  "packageManager": "npm@11.8.0",
+  "packageManager": "npm@11.9.0",
   "license": "EUPL-1.2",
   "private": true,
   "workspaces": [

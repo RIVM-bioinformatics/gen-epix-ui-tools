@@ -1,6 +1,6 @@
 {
   "name": "@gen-epix/oidc-mock-server",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "license": "EUPL-1.2",
   "publishConfig": {
     "access": "public"
@@ -36,11 +36,10 @@
     "@types/basic-auth": "1.1.8",
     "@types/express": "5.0.6",
     "@types/node": "24.10.1",
-    "eslint": "9.39.2",
     "nodemon": "3.1.11",
     "typescript": "5.9.3",
     "rimraf": "6.1.2",
-    "rollup": "4.57.0",
+    "rollup": "4.57.1",
     "rollup-plugin-esbuild": "6.2.1"
   }
 }
