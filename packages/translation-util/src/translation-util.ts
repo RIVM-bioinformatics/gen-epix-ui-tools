@@ -69,13 +69,20 @@ const regexes = [
   /\bt`([^`]+)`/g,
 ];
 
-if (process.argv.length < 3 || process.argv.length > 4) {
-  console.error('Usage: translation-util <packageDir> [--dry-run]');
+if (process.argv.length < 3 || process.argv.length > 6) {
+  console.error('Usage: translation-util <packageDir> [--dry-run] [--fail-on-missing] [--fail-on-stale]');
   process.exit(1);
 }
 
 const packageDir = process.argv[2];
 const isDryRun = process.argv.includes('--dry-run');
+const failOnMissing = process.argv.includes('--fail-on-missing');
+const failOnStale = process.argv.includes('--fail-on-stale');
+
+if ((failOnMissing || failOnStale) && !isDryRun) {
+  console.error('Error: --fail-on-missing and --fail-on-stale can only be used with --dry-run');
+  process.exit(1);
+}
 
 const srcPath = path.join(findGitRootPath(), packageDir, 'src');
 const localePath = path.join(findGitRootPath(), packageDir, 'src', 'locale');
@@ -130,6 +137,20 @@ for (const localeCode of localeCodes) {
 if (isDryRun) {
   console.log(chalk.bold.yellow('🔍 Dry run mode - no files will be modified'));
   printTranslationTable(missingTranslationsPerLocale, staleTranslationsPerLocale, localeCodes);
+  if (failOnMissing) {
+    const hasMissing = localeCodes.some(lc => (missingTranslationsPerLocale[lc]?.length ?? 0) > 0);
+    if (hasMissing) {
+      console.error(chalk.bold.red('❌ Missing translations found. Exiting with error.'));
+      process.exit(1);
+    }
+  }
+  if (failOnStale) {
+    const hasStale = localeCodes.some(lc => (staleTranslationsPerLocale[lc]?.length ?? 0) > 0);
+    if (hasStale) {
+      console.error(chalk.bold.red('❌ Stale translations found. Exiting with error.'));
+      process.exit(1);
+    }
+  }
 } else {
   // Update locale files with new translations and remove stale ones
   for (const localeCode of localeCodes) {
