@@ -9,6 +9,25 @@ import {
 
 import { globSync } from 'glob';
 import chalk from 'chalk';
+import {
+  createSourceFile,
+  forEachChild,
+  isIdentifier,
+  isJsxAttribute,
+  isJsxElement,
+  isJsxExpression,
+  isJsxFragment,
+  isJsxSelfClosingElement,
+  isJsxText,
+  isPropertyAccessExpression,
+  isStringLiteral,
+  ScriptKind,
+  ScriptTarget,
+  type JsxChild,
+  type JsxTagNameExpression,
+  type Node,
+  type NodeArray,
+} from 'typescript';
 
 import { findGitRootPath } from '@gen-epix/tools-lib';
 
@@ -64,6 +83,110 @@ type TranslationFileContent = {
   translation: Record<string, string>;
 };
 
+// ---------------------------------------------------------------------------
+// Trans component extraction helpers
+// ---------------------------------------------------------------------------
+
+const getJsxTagName = (tagName: JsxTagNameExpression): string => {
+  if (isIdentifier(tagName)) {
+    return tagName.text;
+  }
+  if (isPropertyAccessExpression(tagName)) {
+    return tagName.name.text;
+  }
+  return tagName.getText();
+};
+
+const serializeJsxChildren = (children: NodeArray<JsxChild>): string => {
+  let result = '';
+  let elementIndex = 0;
+
+  for (const child of children) {
+    if (isJsxText(child)) {
+      const text = child.text.trim();
+      if (text) {
+        result += text;
+      }
+    } else if (isJsxExpression(child)) {
+      if (child.expression && isStringLiteral(child.expression)) {
+        result += child.expression.text;
+      }
+    } else if (isJsxSelfClosingElement(child)) {
+      const tagName = getJsxTagName(child.tagName);
+      if (tagName.toLowerCase() === 'br') {
+        result += '<br/>';
+      } else {
+        result += `<${elementIndex}/>`;
+        elementIndex++;
+      }
+    } else if (isJsxElement(child)) {
+      const tagName = getJsxTagName(child.openingElement.tagName);
+      if (tagName.toLowerCase() === 'br') {
+        result += '<br/>';
+      } else {
+        const inner = serializeJsxChildren(child.children);
+        result += `<${elementIndex}>${inner}</${elementIndex}>`;
+        elementIndex++;
+      }
+    } else if (isJsxFragment(child)) {
+      const inner = serializeJsxChildren(child.children);
+      result += `<${elementIndex}>${inner}</${elementIndex}>`;
+      elementIndex++;
+    }
+  }
+
+  return result;
+};
+
+const extractTransComponents = (filePath: string): Map<string, string> => {
+  const result = new Map<string, string>();
+  const source = readFileSync(filePath, 'utf-8');
+
+  // Determine script kind: TSX for .tsx files, TS otherwise
+  const scriptKind = filePath.endsWith('.tsx') ? ScriptKind.TSX : ScriptKind.TS;
+  const sourceFile = createSourceFile(
+    filePath,
+    source,
+    ScriptTarget.Latest,
+    /* setParentNodes */ true,
+    scriptKind,
+  );
+
+  const visit = (node: Node): void => {
+    if (isJsxElement(node)) {
+      const tagName = getJsxTagName(node.openingElement.tagName);
+      if (tagName === 'Trans') {
+        for (const attr of node.openingElement.attributes.properties) {
+          if (isJsxAttribute(attr) && attr.name.getText(sourceFile) === 'i18nKey') {
+            let key: string | undefined;
+            if (attr.initializer) {
+              if (isStringLiteral(attr.initializer)) {
+                key = attr.initializer.text;
+              } else if (
+                isJsxExpression(attr.initializer) &&
+                attr.initializer.expression &&
+                isStringLiteral(attr.initializer.expression)
+              ) {
+                key = attr.initializer.expression.text;
+              }
+            }
+            if (key) {
+              const serialized = serializeJsxChildren(node.children);
+              result.set(key, serialized);
+            }
+          }
+        }
+      }
+    }
+    forEachChild(node, visit);
+  };
+
+  visit(sourceFile);
+  return result;
+};
+
+// ---------------------------------------------------------------------------
+
 const regexes = [
   /\bt\(\s*'([^']*)'\s*(?=,|\))/g,
   /\bt`([^`]+)`/g,
@@ -108,6 +231,7 @@ for (const localeCode of localeCodes) {
 }
 
 const newTranslations = new Set<string>();
+const transTranslations = new Map<string, string>();
 const files = globSync('**/*.{ts,tsx}', { cwd: srcPath });
 for (const file of files) {
   const filePath = path.join(srcPath, file);
@@ -117,6 +241,12 @@ for (const file of files) {
     while ((match = regex.exec(content)) !== null) {
       newTranslations.add(match[1]);
     }
+  }
+  // Extract <Trans i18nKey="..."> components from TSX/TS files
+  const transKeys = extractTransComponents(filePath);
+  for (const [key, serialized] of transKeys) {
+    newTranslations.add(key);
+    transTranslations.set(key, serialized);
   }
 }
 
@@ -161,7 +291,12 @@ if (isDryRun) {
     // Add missing translations with empty values
     const missingTranslations = missingTranslationsPerLocale[localeCode];
     for (const key of missingTranslations) {
-      if (localeCode === 'en') {
+      const serializedTrans = transTranslations.get(key);
+      if (serializedTrans !== undefined) {
+        // For Trans components, use serialized JSX content for all locales.
+        // Non-English locales get a ⚠ appended so translators know to adapt the text.
+        json.translation[key] = localeCode === 'en' ? serializedTrans : `${serializedTrans} ⚠`;
+      } else if (localeCode === 'en') {
         json.translation[key] = key; // For English, use the key as the default translation
       } else {
         json.translation[key] = `${key} ⚠`; // For other locales, add a placeholder
