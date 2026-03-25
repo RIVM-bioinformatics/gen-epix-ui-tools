@@ -1,0 +1,17 @@
+0 silly argv {
+0 silly argv   _: [ 'clean' ],
+0 silly argv   lernaVersion: '9.0.6',
+0 silly argv   '$0': 'node_modules/lerna/dist/cli.js'
+0 silly argv }
+1 notice cli v9.0.6
+2 verbose packageConfigs Explicit "packages" configuration found in lerna.json. Resolving packages using the configured glob(s): ["packages/*"]
+3 verbose rootPath /Users/sander/development/gen-epix-ui-tools
+4 error Error: Unsupported URL Type "catalog:": catalog:
+4 error     at unsupportedURLType (/Users/sander/development/gen-epix-ui-tools/node_modules/.pnpm/npm-package-arg@13.0.1/node_modules/npm-package-arg/lib/npa.js:369:15)
+4 error     at fromURL (/Users/sander/development/gen-epix-ui-tools/node_modules/.pnpm/npm-package-arg@13.0.1/node_modules/npm-package-arg/lib/npa.js:428:13)
+4 error     at npa.resolve (/Users/sander/development/gen-epix-ui-tools/node_modules/.pnpm/npm-package-arg@13.0.1/node_modules/npm-package-arg/lib/npa.js:110:12)
+4 error     at /Users/sander/development/gen-epix-ui-tools/node_modules/.pnpm/lerna@9.0.6_@types+node@24.10.1/node_modules/lerna/dist/index.js:7523:62
+4 error     at Array.forEach (<anonymous>)
+4 error     at /Users/sander/development/gen-epix-ui-tools/node_modules/.pnpm/lerna@9.0.6_@types+node@24.10.1/node_modules/lerna/dist/index.js:7503:42
+4 error     at PackageGraph.forEach (<anonymous>)
+4 error     at new PackageGraph (/Users/sander/development/gen-epix-ui-tools/node_modules/.pnpm/lerna@9.0.6_@types+node@24.10.1/node_modules/lerna/dist/index.js:7496:14)

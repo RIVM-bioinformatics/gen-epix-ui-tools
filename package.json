@@ -1,24 +1,21 @@
 {
   "name": "@gen-epix/ui-tools",
   "version": "0.0.1",
-  "packageManager": "npm@11.11.1",
+  "packageManager": "pnpm@10.33.0",
   "license": "EUPL-1.2",
   "private": true,
-  "workspaces": [
-    "packages/*"
-  ],
   "scripts": {
     "lint": "lerna run lint --stream --no-bail",
     "lint-fix": "lerna run lint-fix --stream --no-bail",
     "check-types": "lerna run check-types --stream --no-bail",
-    "build-all": "npm run build -w @gen-epix/tools-lib && npm run build -w @gen-epix/generate-license-manifest && npm run build -w @gen-epix/oidc-mock-server && npm run build -w @gen-epix/generate-api && npm run build -w @gen-epix/generate-demo-upload-data && npm run build -w @gen-epix/translation-util",
+    "build-all": "pnpm --filter @gen-epix/tools-lib run build && pnpm --filter @gen-epix/generate-license-manifest run build && pnpm --filter @gen-epix/oidc-mock-server run build && pnpm --filter @gen-epix/generate-api run build && pnpm --filter @gen-epix/generate-demo-upload-data run build && pnpm --filter @gen-epix/translation-util run build",
     "clean": "lerna clean && rm -fr node_modules",
-    "validate-all": "npm run lint && npm run check-types",
+    "validate-all": "pnpm run lint && pnpm run check-types",
     "generate-license-manifest": "generate-license-manifest packages/demo-client/public",
     "start-oidc-mock-server": "nodemon --watch ./oidc-mock-server.config.json ./node_modules/.bin/oidc-mock-server"
   },
   "devDependencies": {
-    "lerna": "9.0.6",
+    "lerna": "9.0.7",
     "nodemon": "3.1.14"
   }
 }
