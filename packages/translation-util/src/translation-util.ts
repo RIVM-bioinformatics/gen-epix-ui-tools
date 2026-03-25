@@ -29,7 +29,7 @@ import {
   type NodeArray,
 } from 'typescript';
 
-import { findGitRootPath } from '@gen-epix/tools-lib';
+import { findPackageRootPath } from '@gen-epix/tools-lib';
 
 type TranslationCounts = Record<string, { missing: number; stale: number }>;
 
@@ -207,8 +207,8 @@ if ((failOnMissing || failOnStale) && !isDryRun) {
   process.exit(1);
 }
 
-const srcPath = path.join(findGitRootPath(), packageDir, 'src');
-const localePath = path.join(findGitRootPath(), packageDir, 'src', 'locale');
+const srcPath = path.join(findPackageRootPath(), packageDir, 'src');
+const localePath = path.join(findPackageRootPath(), packageDir, 'src', 'locale');
 
 if (!existsSync(srcPath)) {
   console.error(`Source directory not found: ${srcPath}`);
