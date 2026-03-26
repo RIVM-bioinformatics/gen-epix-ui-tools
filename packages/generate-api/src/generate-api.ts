@@ -11,8 +11,7 @@ import {
 } from 'fs';
 import { execSync } from 'child_process';
 import { tmpdir } from 'os';
-
-import { findGitRootPath } from '@gen-epix/tools-lib';
+import { createRequire } from 'module';
 
 import {
   fetchOpenApiJson,
@@ -46,8 +45,12 @@ fetchOpenApiJson('https://127.0.0.1:8000/openapi.json').catch((error) => {
 
 
   // STEP 2: run the openapi-generator-cli to generate the API client
+  const require = createRequire(import.meta.url);
+  const openApiGeneratorCliBinPath = path.join(
+    path.dirname(require.resolve('@openapitools/openapi-generator-cli/package.json')),
+    'main.js',
+  );
   const generatedApiTargetDir = path.join(tempDir, 'generated');
-  const openApiGeneratorCliBinPath = path.join(findGitRootPath(), 'node_modules', '.bin', 'openapi-generator-cli');
   const openApiGeneratorCommand = `${openApiGeneratorCliBinPath} generate -i ${sanitizedOpenApiJsonPath} -g typescript-axios --additional-properties="enumPropertyNaming=original" -o ${generatedApiTargetDir}`;
 
   console.log('Running command:', openApiGeneratorCommand);
