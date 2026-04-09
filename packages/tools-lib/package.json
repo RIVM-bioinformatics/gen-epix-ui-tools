@@ -1,6 +1,6 @@
 {
   "name": "@gen-epix/tools-lib",
-  "version": "0.0.7",
+  "version": "0.1.0",
   "license": "EUPL-1.2",
   "publishConfig": {
     "access": "public"
@@ -27,15 +27,14 @@
     "findup-sync": "5.0.0"
   },
   "devDependencies": {
-    "@gen-epix/eslint-config": "*",
-    "@gen-epix/typescript-config": "*",
+    "@gen-epix/eslint-config": "workspace:",
     "@types/findup-sync": "4.0.5",
     "@types/node": "catalog:",
     "eslint": "catalog:",
-    "typescript": "catalog:",
     "rimraf": "catalog:",
     "rollup": "catalog:",
     "rollup-plugin-dts": "catalog:",
-    "rollup-plugin-esbuild": "catalog:"
+    "rollup-plugin-esbuild": "catalog:",
+    "typescript": "catalog:"
   }
 }

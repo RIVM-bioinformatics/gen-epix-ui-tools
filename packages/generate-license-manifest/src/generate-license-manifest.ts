@@ -2,11 +2,11 @@
 
 import path from 'path';
 import {
-  readFileSync,
-  writeFileSync,
-  readdirSync,
   existsSync,
+  readdirSync,
+  readFileSync,
   unlinkSync,
+  writeFileSync,
 } from 'fs';
 
 import { findGitRootPath } from '@gen-epix/tools-lib';
@@ -23,10 +23,10 @@ if (!existsSync(targetDir)) {
 }
 
 type PackageJson = {
+  homepage: string;
+  license: string;
   name: string;
   version: string;
-  license: string;
-  homepage: string;
 };
 
 const licenseEntries: Map<string, PackageJson> = new Map();
@@ -45,10 +45,10 @@ const processFolder = (sourceDir: string, trail?: string[]): number => {
       const packageJson = JSON.parse(readFileSync(packageJsonPath, 'utf-8')) as PackageJson;
       if (packageJson.name && !licenseEntries.has(packageJson.name)) {
         const entry: PackageJson = {
+          homepage: packageJson.homepage,
+          license: packageJson.license,
           name: packageJson.name,
           version: packageJson.version,
-          license: packageJson.license,
-          homepage: packageJson.homepage,
         };
         licenseEntries.set(packageJson.name, entry);
       }

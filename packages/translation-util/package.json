@@ -1,6 +1,6 @@
 {
   "name": "@gen-epix/translation-util",
-  "version": "0.0.5",
+  "version": "0.1.0",
   "license": "EUPL-1.2",
   "publishConfig": {
     "access": "public"
@@ -28,18 +28,17 @@
   },
   "dependencies": {
     "@gen-epix/tools-lib": "*",
-    "glob": "13.0.6",
     "chalk": "5.6.2",
+    "glob": "13.0.6",
     "typescript": "catalog:"
   },
   "devDependencies": {
-    "@gen-epix/eslint-config": "*",
-    "@gen-epix/typescript-config": "*",
+    "@gen-epix/eslint-config": "workspace:",
     "@types/node": "catalog:",
     "eslint": "catalog:",
-    "vite-node": "catalog:",
     "rimraf": "catalog:",
     "rollup": "catalog:",
-    "rollup-plugin-esbuild": "catalog:"
+    "rollup-plugin-esbuild": "catalog:",
+    "vite-node": "catalog:"
   }
 }

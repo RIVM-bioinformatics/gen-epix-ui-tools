@@ -1,6 +1,6 @@
 {
   "name": "@gen-epix/generate-demo-upload-data",
-  "version": "0.0.4",
+  "version": "0.1.0",
   "license": "EUPL-1.2",
   "publishConfig": {
     "access": "public"
@@ -28,11 +28,10 @@
   },
   "dependencies": {
     "@gen-epix/tools-lib": "*",
-    "read-excel-file": "7.0.3"
+    "read-excel-file": "8.0.3"
   },
   "devDependencies": {
-    "@gen-epix/eslint-config": "*",
-    "@gen-epix/typescript-config": "*",
+    "@gen-epix/eslint-config": "workspace:",
     "@types/node": "catalog:",
     "eslint": "catalog:",
     "rimraf": "catalog:",

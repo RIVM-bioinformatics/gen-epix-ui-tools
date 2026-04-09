@@ -1,27 +1,30 @@
+import { createRequire } from 'node:module';
+
 import globals from 'globals';
 import js from '@eslint/js';
 import * as parserTS from '@typescript-eslint/parser';
 import pluginTS from '@typescript-eslint/eslint-plugin';
 import pluginImport from 'eslint-plugin-import';
 import pluginImportNewlines from 'eslint-plugin-import-newlines';
+import pluginPerfectionist from 'eslint-plugin-perfectionist';
 import pluginPreferArrow from 'eslint-plugin-prefer-arrow';
 import pluginReact from 'eslint-plugin-react';
 import pluginReactHooks from 'eslint-plugin-react-hooks';
 import pluginReactRefresh from 'eslint-plugin-react-refresh';
 import pluginJsxA11y from 'eslint-plugin-jsx-a11y';
-import pluginEslintComments from 'eslint-plugin-eslint-comments';
 import pluginStylistic from '@stylistic/eslint-plugin';
 import pluginVitest from '@vitest/eslint-plugin';
+
+const require = createRequire(import.meta.url);
+const { version: eslintVersion } = require('eslint/package.json');
+
+const supportsLegacyReactPluginRules = Number.parseInt(eslintVersion, 10) < 10;
 
 const jsPlugins = {
   import: pluginImport,
   'import-newlines': pluginImportNewlines,
+  perfectionist: pluginPerfectionist,
   'prefer-arrow': pluginPreferArrow,
-  react: pluginReact,
-  'react-hooks': pluginReactHooks,
-  'react-refresh': pluginReactRefresh,
-  'jsx-a11y': pluginJsxA11y,
-  'eslint-comments': pluginEslintComments,
   '@stylistic': pluginStylistic,
 };
 
@@ -31,14 +34,22 @@ const tsPlugins = {
   ts: pluginTS,
 };
 
+const tsxPlugins = {
+  ...tsPlugins,
+  'react-refresh': pluginReactRefresh,
+  ...(supportsLegacyReactPluginRules
+    ? {
+      react: pluginReact,
+      'react-hooks': pluginReactHooks,
+      'jsx-a11y': pluginJsxA11y,
+    }
+    : {}),
+};
+
 
 const jsRules = {
   ...js.configs.recommended.rules,
-  ...pluginEslintComments.configs.recommended.rules,
-  ...pluginReact.configs.flat.all.rules,
-  ...pluginReactHooks.configs.recommended.rules,
   ...pluginImport.configs.recommended.rules,
-  ...pluginReactRefresh.configs.recommended.rules,
   'no-nested-ternary': ['error'],
   curly: ['error', 'all'],
   'no-else-return': ['error'],
@@ -70,16 +81,12 @@ const jsRules = {
     'error',
     1,
   ],
-  // BUG in @stylistic/type-annotation-spacing causes incorrect errors
+  // BUG in @stylistic/type-annotation-spacing in combination with @stylistic/arrow-spacing causes incorrect errors
   // '@stylistic/type-annotation-spacing': [
   //   'error',
   //   {
   //     before: false,
   //     after: true,
-  //     arrow: {
-  //       before: true,
-  //       after: true,
-  //     },
   //   },
   // ],
   '@stylistic/arrow-spacing': ['error', { before: true, after: true }],
@@ -174,15 +181,6 @@ const jsRules = {
   '@stylistic/jsx-pascal-case': ['error'],
   '@stylistic/jsx-quotes': ['error', 'prefer-single'],
   '@stylistic/jsx-self-closing-comp': ['error'],
-  'react/jsx-sort-props': 'off', // replaced by @stylistic/jsx-sort-props
-  '@stylistic/jsx-sort-props': ['error', {
-    ignoreCase: true,
-    callbacksLast: true,
-    shorthandFirst: true,
-    reservedFirst: true,
-    noSortAlphabetically: true,
-    multiline: 'ignore',
-  }],
   '@stylistic/jsx-tag-spacing': ['error', {
     closingSlash: 'never',
     beforeSelfClosing: 'proportional-always',
@@ -205,11 +203,6 @@ const jsRules = {
   'no-setter-return': ['error'],
   'no-dupe-else-if': ['error'],
   'no-constructor-return': ['error'],
-  'eslint-comments/disable-enable-pair': ['error', {
-    allowWholeFile: true,
-  }],
-  'eslint-comments/no-unlimited-disable': ['error'],
-  'eslint-comments/no-unused-disable': ['error'],
 
   // plugin: prefer-arrow
   'prefer-arrow/prefer-arrow-functions': [
@@ -228,133 +221,160 @@ const jsRules = {
   'import/no-absolute-path': ['error'],
   'import/first': ['error'],
   'import/no-duplicates': ['error'],
-  'import/order': ['error', {
-    'newlines-between': 'always',
+  'import/newline-after-import': ['error'],
+  'import/no-cycle': ['error', { ignoreExternal: false, maxDepth: 3 }],
+
+  // plugin: perfectionist
+  'perfectionist/sort-variable-declarations': ['error'],
+  'perfectionist/sort-intersection-types': ['error'],
+  'perfectionist/sort-import-attributes': ['error'],
+  'perfectionist/sort-export-attributes': ['error'],
+  'perfectionist/sort-heritage-clauses': ['error'],
+  'perfectionist/sort-array-includes': ['error'],
+  'perfectionist/sort-arrays': ['error'],
+  'perfectionist/sort-named-imports': ['error'],
+  'perfectionist/sort-named-exports': ['error'],
+  'perfectionist/sort-object-types': ['error'],
+  'perfectionist/sort-union-types': ['error'],
+  'perfectionist/sort-switch-case': ['error'],
+  'perfectionist/sort-decorators': ['error'],
+  'perfectionist/sort-interfaces': ['error'],
+  'perfectionist/sort-jsx-props': ['error'],
+  'perfectionist/sort-modules': ['error'],
+  'perfectionist/sort-classes': ['error'],
+  'perfectionist/sort-imports': ['error', {
+    type: 'unsorted',
+    order: 'asc',
+    fallbackSort: {
+      type: 'subgroup-order',
+      order: 'asc',
+    },
+    newlinesBetween: 1,
     groups: [
       'builtin',
-      'external',
+      ['external', 'genEpixExternal'],
       'internal',
       'parent',
       'sibling',
       'index',
-      'object',
+      'ts-equals-import',
       'unknown',
     ],
-    pathGroups: [
+    customGroups: [
       {
-        pattern: '@gen-epix/**',
-        group: 'external',
-        position: 'after',
+        groupName: 'genEpixExternal',
+        selector: 'external',
+        elementNamePattern: '^@gen-epix/.+',
       },
     ],
-    pathGroupsExcludedImportTypes: ['builtin'],
   }],
-  'import/newline-after-import': ['error'],
-  'import/no-cycle': ['error', { ignoreExternal: false, maxDepth: 3 }],
+  'perfectionist/sort-exports': ['error'],
+  'perfectionist/sort-objects': ['error'],
+  'perfectionist/sort-enums': ['error'],
+  'perfectionist/sort-sets': ['error'],
+  'perfectionist/sort-maps': ['error'],
+};
 
-  // plugin: react-hooks
-  'react-hooks/set-state-in-effect': ['off'], // to many false positives
-  'react-hooks/immutability': ['off'], // to many false positives
-  'react-hooks/preserve-manual-memoization': ['off'], // to many false positives
-  'react-hooks/rules-of-hooks': ['error'],
-  'react-hooks/exhaustive-deps': ['error', {
-    additionalHooks: 'useCleanupCallback',
-  }],
+const tsxRules = {
+  ...pluginReactRefresh.configs.recommended.rules,
+  '@stylistic/jsx-sort-props': ['off'],
+  ...(supportsLegacyReactPluginRules
+    ? {
+      ...pluginReact.configs.flat.all.rules,
+      ...pluginReactHooks.configs.recommended.rules,
+      ...pluginJsxA11y.configs.recommended.rules,
 
-  // plugin: react
-  'react/display-name': ['off'],
-  'react/require-default-props': ['off'],
-  'react/no-unused-prop-types': ['off'],
-  'react/forbid-foreign-prop-types': ['error', {
-    allowInPropTypes: true,
-  }],
-  'react/jsx-no-comment-textnodes': ['error'],
-  'react/jsx-no-duplicate-props': ['error'],
-  'react/jsx-equals-spacing': ['error', 'never'],
-  'react/jsx-handler-names': ['error',
-    {
-      eventHandlerPrefix: 'on',
-      eventHandlerPropPrefix: 'on',
-    },
-  ],
-  'react/jsx-no-undef': ['error'],
-  'react/jsx-indent': [
-    'error',
-    2,
-  ],
-  'react/jsx-indent-props': [
-    'error',
-    2,
-  ],
-  'react/jsx-pascal-case': [
-    'error',
-    {
-      allowAllCaps: false,
-      ignore: [],
-    },
-  ],
-  'react/jsx-filename-extension': [
-    'error',
-    {
-      extensions: [
-        '.tsx',
+      // plugin: react-hooks
+      'react-hooks/set-state-in-effect': ['off'], // to many false positives
+      'react-hooks/immutability': ['off'], // to many false positives
+      'react-hooks/preserve-manual-memoization': ['off'], // to many false positives
+      'react-hooks/rules-of-hooks': ['error'],
+      'react-hooks/exhaustive-deps': ['error', {
+        additionalHooks: 'useCleanupCallback',
+      }],
+
+      // plugin: react
+      'react/display-name': ['off'],
+      'react/require-default-props': ['off'],
+      'react/no-unused-prop-types': ['off'],
+      'react/forbid-foreign-prop-types': ['error', {
+        allowInPropTypes: true,
+      }],
+      'react/jsx-no-bind': ['error', {
+        ignoreRefs: true,
+        allowArrowFunctions: false,
+        allowFunctions: false,
+        allowBind: false,
+      }],
+      'react/jsx-no-comment-textnodes': ['error'],
+      'react/jsx-no-duplicate-props': ['error'],
+      'react/jsx-equals-spacing': ['error', 'never'],
+      'react/jsx-handler-names': ['error',
+        {
+          eventHandlerPrefix: 'on',
+          eventHandlerPropPrefix: 'on',
+        },
       ],
-    },
-  ],
-  'react/jsx-uses-react': ['off'], // @see https://reactjs.org/blog/2020/09/22/introducing-the-new-jsx-transform.html
-  'react/jsx-uses-vars': ['error'],
-  'react/no-danger-with-children': ['error'],
-  'react/jsx-max-depth': [0],
-  'react/no-is-mounted': ['error'],
-  'react/no-typos': ['error'],
-  'react/react-in-jsx-scope': ['off'], // @see https://reactjs.org/blog/2020/09/22/introducing-the-new-jsx-transform.html
-  'react/require-render-return': ['error'],
-  'react/style-prop-object': ['error'],
-  'react/jsx-newline': ['off'],
-  'react/jsx-no-constructed-context-values': ['error'],
-  'react/sort-comp': [
-    'error',
-    {
-      order: [
-        'static-variables',
-        'static-methods',
-        'instance-variables',
-        'type-annotations',
-        'getters',
-        'setters',
-        'lifecycle',
-        'instance-methods',
-        'rendering',
-        '/^on.+$/',
-        'everything-else',
+      'react/jsx-no-undef': ['error'],
+      'react/jsx-indent': [
+        'error',
+        2,
       ],
-
-    },
-  ],
-  'react/no-multi-comp': ['off'],
-  'react/destructuring-assignment': 'off',
-  'react/prefer-stateless-function': [
-    'error', {
-      ignorePureComponents: true,
-    },
-  ],
-  'react/function-component-definition': [
-    'error',
-    {
-      namedComponents: 'arrow-function',
-      unnamedComponents: 'arrow-function',
-    },
-  ],
-  'react/jsx-curly-brace-presence': [
-    'error',
-    'always',
-  ],
-  'react/no-set-state': 'off',
-  'react/forbid-component-props': 'off',
-  'react/jsx-props-no-spreading': 'off',
-  'react/button-has-type': 'off',
-  'react/jsx-no-leaked-render': 'off',
-  'react/jsx-no-useless-fragment': 'off',
+      'react/jsx-indent-props': [
+        'error',
+        2,
+      ],
+      'react/jsx-pascal-case': [
+        'error',
+        {
+          allowAllCaps: false,
+          ignore: [],
+        },
+      ],
+      'react/jsx-filename-extension': [
+        'error',
+        {
+          extensions: [
+            '.tsx',
+          ],
+        },
+      ],
+      'react/jsx-uses-react': ['off'], // @see https://reactjs.org/blog/2020/09/22/introducing-the-new-jsx-transform.html
+      'react/jsx-uses-vars': ['error'],
+      'react/no-danger-with-children': ['error'],
+      'react/jsx-max-depth': [0],
+      'react/no-is-mounted': ['error'],
+      'react/no-typos': ['error'],
+      'react/react-in-jsx-scope': ['off'], // @see https://reactjs.org/blog/2020/09/22/introducing-the-new-jsx-transform.html
+      'react/require-render-return': ['error'],
+      'react/style-prop-object': ['error'],
+      'react/jsx-newline': ['off'],
+      'react/jsx-no-constructed-context-values': ['error'],
+      'react/sort-comp': ['off'],
+      'react/no-multi-comp': ['off'],
+      'react/destructuring-assignment': 'off',
+      'react/prefer-stateless-function': [
+        'error', {
+          ignorePureComponents: true,
+        },
+      ],
+      'react/function-component-definition': [
+        'error',
+        {
+          namedComponents: 'arrow-function',
+          unnamedComponents: 'arrow-function',
+        },
+      ],
+      'react/jsx-curly-brace-presence': ['off'],
+      'react/jsx-one-expression-per-line': ['off'],
+      'react/no-set-state': 'off',
+      'react/forbid-component-props': 'off',
+      'react/jsx-props-no-spreading': 'off',
+      'react/button-has-type': 'off',
+      'react/jsx-no-leaked-render': 'off',
+      'react/jsx-no-useless-fragment': 'off',
+    }
+    : {}),
 };
 
 const tsRules = {
@@ -363,7 +383,6 @@ const tsRules = {
   ...pluginTS.configs['eslint-recommended'].rules,
   ...pluginTS.configs['recommended'].rules,
   ...pluginTS.configs['recommended-requiring-type-checking'].rules,
-  ...pluginJsxA11y.configs.recommended.rules,
 
 
   '@typescript-eslint/no-misused-promises': 'off',
@@ -581,14 +600,15 @@ const tsRules = {
     },
   ],
   'dot-notation': ['off'],
-  'react/jsx-one-expression-per-line': ['off'],
-  'react/jsx-curly-brace-presence': ['off'],
   // '@typescript-eslint/naming-convention': ['off'],
 };
 
 /** @type {import('@typescript-eslint/utils/ts-eslint').FlatConfig.ConfigArray} */
 const configArray = [
   {
+    linterOptions: {
+      reportUnusedDisableDirectives: 'error',
+    },
     settings: {
       // ...eslintPluginImport.configs.typescript.settings,
       vitest: {
@@ -658,8 +678,18 @@ const configArray = [
     },
   },
   {
+    files: ['**/*.tsx'],
+    ignores: ['**/node_modules/**', '**/dist/**', '**/src/api/**'],
+    plugins: {
+      ...tsxPlugins,
+    },
+    rules: {
+      ...tsxRules,
+    },
+  },
+  {
     files: ['**/*.js'],
-    ignores: ['**/node_modules/**', '**/dist/**'],
+    ignores: ['**/node_modules/**', '**/dist/**', '**/eslint.config.js'],
     languageOptions: {
       parserOptions: {
         ecmaVersion: 12,

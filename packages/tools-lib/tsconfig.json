@@ -1,16 +1,33 @@
 {
   "$schema": "http://json.schemastore.org/tsconfig",
-  "extends": "@gen-epix/typescript-config/tsconfig.node.json",
   "compilerOptions": {
     "esModuleInterop": true,
-    "module": "ESNext",
+    "allowSyntheticDefaultImports": true,
+    "composite": false,
+    "declaration": false,
+    "experimentalDecorators": true,
+    "forceConsistentCasingInFileNames": true,
+    "isolatedModules": true,
+    "preserveSymlinks": false,
+    "noFallthroughCasesInSwitch": true,
+    "noImplicitAny": true,
+    "resolveJsonModule": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "strictNullChecks": false,
+    "module": "esnext",
     "target": "ESNext",
-    "moduleResolution": "Node",
+    "moduleResolution": "bundler",
+    "rootDir": "./src",
     "outDir": "dist",
-    "noEmit": false
+    "noEmit": false,
+    "types": [
+      "node"
+    ]
   },
   "ts-node": {
     "esm": true,
+    "files": true
   },
   "include": [
     "src/**/*"

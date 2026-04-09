@@ -1,6 +1,6 @@
 {
   "name": "@gen-epix/oidc-mock-server",
-  "version": "0.0.9",
+  "version": "0.1.0",
   "license": "EUPL-1.2",
   "publishConfig": {
     "access": "public"
@@ -31,16 +31,15 @@
     "oauth2-mock-server": "8.2.2"
   },
   "devDependencies": {
-    "@gen-epix/eslint-config": "*",
-    "@gen-epix/typescript-config": "*",
+    "@gen-epix/eslint-config": "workspace:",
     "@types/basic-auth": "1.1.8",
     "@types/express": "5.0.6",
     "@types/node": "catalog:",
     "eslint": "catalog:",
     "nodemon": "3.1.14",
-    "typescript": "catalog:",
     "rimraf": "catalog:",
     "rollup": "catalog:",
-    "rollup-plugin-esbuild": "catalog:"
+    "rollup-plugin-esbuild": "catalog:",
+    "typescript": "catalog:"
   }
 }

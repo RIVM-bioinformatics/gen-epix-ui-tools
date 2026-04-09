@@ -1,13 +1,13 @@
 #!/usr/bin/env node
 import * as path from 'path';
 import {
+  cpSync,
   existsSync,
+  mkdirSync,
   mkdtempSync,
   rmSync,
   unlinkSync,
   writeFileSync,
-  cpSync,
-  mkdirSync,
 } from 'fs';
 import { execSync } from 'child_process';
 import { tmpdir } from 'os';
@@ -33,7 +33,7 @@ const tempDir = mkdtempSync(path.join(tmpdir(), 'gen-epix-generate-api-'));
 
 // STEP 1: fetch json, sanitize it and write it to a file
 // eslint-disable-next-line @typescript-eslint/no-floating-promises
-fetchOpenApiJson('https://127.0.0.1:8000/openapi.json').catch((error) => {
+fetchOpenApiJson('https://127.0.0.1:8000/openapi.json').catch((error: unknown) => {
   console.error('Error fetching OpenAPI JSON:', error);
   process.exit(1);
 }).then(jsonContent => {
@@ -84,5 +84,5 @@ fetchOpenApiJson('https://127.0.0.1:8000/openapi.json').catch((error) => {
   });
 
   // STEP 5: clean up the temporary directory
-  rmSync(tempDir, { recursive: true, force: true });
+  rmSync(tempDir, { force: true, recursive: true });
 });

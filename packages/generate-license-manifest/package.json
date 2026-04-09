@@ -1,6 +1,6 @@
 {
   "name": "@gen-epix/generate-license-manifest",
-  "version": "0.0.7",
+  "version": "0.1.0",
   "license": "EUPL-1.2",
   "publishConfig": {
     "access": "public"
@@ -31,14 +31,13 @@
     "@gen-epix/tools-lib": "*"
   },
   "devDependencies": {
-    "@gen-epix/eslint-config": "*",
-    "@gen-epix/typescript-config": "*",
+    "@gen-epix/eslint-config": "workspace:",
     "@types/node": "catalog:",
     "eslint": "catalog:",
-    "typescript": "catalog:",
-    "vite-node": "catalog:",
     "rimraf": "catalog:",
     "rollup": "catalog:",
-    "rollup-plugin-esbuild": "catalog:"
+    "rollup-plugin-esbuild": "catalog:",
+    "typescript": "catalog:",
+    "vite-node": "catalog:"
   }
 }

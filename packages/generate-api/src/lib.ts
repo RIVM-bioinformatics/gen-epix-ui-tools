@@ -1,16 +1,15 @@
 import {
-  writeFileSync,
   readFileSync,
+  writeFileSync,
 } from 'fs';
 import { Agent } from 'https';
 
 import fetch from 'node-fetch';
 import type { OpenAPIV3_1 } from 'openapi-types';
 
-
-export type JSONObject = boolean | string | number | JSONObject[] | { [key: string]: JSONObject };
-export type AnyOfItem = { type: string; nullable: boolean; $ref: string };
+export type AnyOfItem = { $ref: string; nullable: boolean; type: string };
 export type AnyOfLeaf = AnyOfItem[];
+export type JSONObject = { [key: string]: JSONObject } | boolean | JSONObject[] | number | string;
 
 const sanitizeJsonAttributes = (leaf: JSONObject): JSONObject => {
   if (Array.isArray(leaf)) {

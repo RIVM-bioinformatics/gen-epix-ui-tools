@@ -8,7 +8,7 @@ import {
 import * as path from 'path';
 import * as readline from 'readline';
 
-import readXlsxFile, { readSheetNames } from 'read-excel-file/node';
+import readExcelFile, { readSheet } from 'read-excel-file/node';
 
 // Types
 interface Arguments {
@@ -18,32 +18,34 @@ interface Arguments {
 
 interface ColumnMapping {
   idColumn: string;
-  seqColumn: string;
   readColumn: string;
   readFwdColumn: string;
   readRevColumn: string;
+  seqColumn: string;
 }
 
 // Excel reading function
 const readExcelHeaders = async (filePath: string): Promise<string[]> => {
   try {
-    // First, get available sheet names
-    const sheetNames = await readSheetNames(filePath);
+    const sheets = await readExcelFile(filePath);
+
+    if (sheets.length === 0) {
+      throw new Error('Excel file does not contain any sheets');
+    }
+
+    const sheetNames = sheets.map(sheet => sheet.sheet);
     console.log(`\nAvailable sheets: ${sheetNames.join(', ')}`);
 
     // Use the first sheet by default
-    const sheetName = sheetNames[0];
-    console.log(`Reading headers from sheet: ${sheetName}`);
+    const [firstSheet] = sheets;
+    console.log(`Reading headers from sheet: ${firstSheet.sheet}`);
 
-    // Read the first row to get headers
-    const rows = await readXlsxFile(filePath, { sheet: sheetName });
-
-    if (rows.length === 0) {
+    if (firstSheet.data.length === 0) {
       throw new Error('Excel file is empty');
     }
 
     // Convert first row to strings and filter out null/undefined values
-    const headers = rows[0]
+    const headers = firstSheet.data[0]
       .map(cell => cell?.toString() || '')
       .filter(header => header.trim() !== '');
 
@@ -55,13 +57,9 @@ const readExcelHeaders = async (filePath: string): Promise<string[]> => {
 };
 
 // Read all Excel data
-const readExcelData = async (filePath: string): Promise<unknown[][]> => {
+const readExcelData = async (filePath: string) => {
   try {
-    const sheetNames = await readSheetNames(filePath);
-    const sheetName = sheetNames[0];
-
-    const rows = await readXlsxFile(filePath, { sheet: sheetName });
-    return rows;
+    return await readSheet(filePath);
   } catch (error) {
     console.error('Error reading Excel data:', error);
     throw error;
@@ -262,10 +260,10 @@ const main = async () => {
 
   const mapping: ColumnMapping = {
     idColumn,
-    seqColumn,
     readColumn,
     readFwdColumn,
     readRevColumn,
+    seqColumn,
   };
 
   console.log('\nColumn Mapping Summary:');
