@@ -1,6 +1,6 @@
 {
   "name": "@gen-epix/generate-demo-upload-data",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "license": "EUPL-1.2",
   "publishConfig": {
     "access": "public"
@@ -27,7 +27,7 @@
     "generate-demo-upload-data": "bin/generate-demo-upload-data.js"
   },
   "dependencies": {
-    "@gen-epix/tools-lib": "*",
+    "@gen-epix/tools-lib": "workspace:",
     "read-excel-file": "8.0.3"
   },
   "devDependencies": {

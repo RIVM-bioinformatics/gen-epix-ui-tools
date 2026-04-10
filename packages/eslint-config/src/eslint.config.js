@@ -15,10 +15,7 @@ import pluginJsxA11y from 'eslint-plugin-jsx-a11y';
 import pluginStylistic from '@stylistic/eslint-plugin';
 import pluginVitest from '@vitest/eslint-plugin';
 
-const require = createRequire(import.meta.url);
-const { version: eslintVersion } = require('eslint/package.json');
-
-const supportsLegacyReactPluginRules = Number.parseInt(eslintVersion, 10) < 10;
+const packageRequire = createRequire(import.meta.url);
 
 const jsPlugins = {
   import: pluginImport,
@@ -36,14 +33,10 @@ const tsPlugins = {
 
 const tsxPlugins = {
   ...tsPlugins,
+  react: pluginReact,
+  'react-hooks': pluginReactHooks,
   'react-refresh': pluginReactRefresh,
-  ...(supportsLegacyReactPluginRules
-    ? {
-      react: pluginReact,
-      'react-hooks': pluginReactHooks,
-      'jsx-a11y': pluginJsxA11y,
-    }
-    : {}),
+  'jsx-a11y': pluginJsxA11y,
 };
 
 
@@ -278,112 +271,108 @@ const jsRules = {
 const tsxRules = {
   ...pluginReactRefresh.configs.recommended.rules,
   '@stylistic/jsx-sort-props': ['off'],
-  ...(supportsLegacyReactPluginRules
-    ? {
-      ...pluginReact.configs.flat.all.rules,
-      ...pluginReactHooks.configs.recommended.rules,
-      ...pluginJsxA11y.configs.recommended.rules,
+  ...pluginReact.configs.flat.all.rules,
+  ...pluginReactHooks.configs.recommended.rules,
+  ...pluginJsxA11y.configs.recommended.rules,
 
-      // plugin: react-hooks
-      'react-hooks/set-state-in-effect': ['off'], // to many false positives
-      'react-hooks/immutability': ['off'], // to many false positives
-      'react-hooks/preserve-manual-memoization': ['off'], // to many false positives
-      'react-hooks/rules-of-hooks': ['error'],
-      'react-hooks/exhaustive-deps': ['error', {
-        additionalHooks: 'useCleanupCallback',
-      }],
+  // plugin: react-hooks
+  'react-hooks/set-state-in-effect': ['off'], // to many false positives
+  'react-hooks/immutability': ['off'], // to many false positives
+  'react-hooks/preserve-manual-memoization': ['off'], // to many false positives
+  'react-hooks/rules-of-hooks': ['error'],
+  'react-hooks/exhaustive-deps': ['error', {
+    additionalHooks: 'useCleanupCallback',
+  }],
 
-      // plugin: react
-      'react/display-name': ['off'],
-      'react/require-default-props': ['off'],
-      'react/no-unused-prop-types': ['off'],
-      'react/forbid-foreign-prop-types': ['error', {
-        allowInPropTypes: true,
-      }],
-      'react/jsx-no-bind': ['error', {
-        ignoreRefs: true,
-        allowArrowFunctions: false,
-        allowFunctions: false,
-        allowBind: false,
-      }],
-      'react/jsx-no-comment-textnodes': ['error'],
-      'react/jsx-no-duplicate-props': ['error'],
-      'react/jsx-equals-spacing': ['error', 'never'],
-      'react/jsx-handler-names': ['error',
-        {
-          eventHandlerPrefix: 'on',
-          eventHandlerPropPrefix: 'on',
-        },
+  // plugin: react
+  'react/display-name': ['off'],
+  'react/require-default-props': ['off'],
+  'react/no-unused-prop-types': ['off'],
+  'react/no-array-index-key': ['error'],
+  'react/forbid-foreign-prop-types': ['error', {
+    allowInPropTypes: true,
+  }],
+  'react/jsx-no-comment-textnodes': ['error'],
+  'react/jsx-no-duplicate-props': ['error'],
+  'react/jsx-equals-spacing': ['error', 'never'],
+  'react/jsx-handler-names': ['error',
+    {
+      eventHandlerPrefix: 'on',
+      eventHandlerPropPrefix: 'on',
+    },
+  ],
+  'react/jsx-no-undef': ['error'],
+  'react/jsx-indent': [
+    'error',
+    2,
+  ],
+  'react/jsx-indent-props': [
+    'error',
+    2,
+  ],
+  'react/jsx-pascal-case': [
+    'error',
+    {
+      allowAllCaps: false,
+      ignore: [],
+    },
+  ],
+  'react/jsx-filename-extension': [
+    'error',
+    {
+      extensions: [
+        '.tsx',
       ],
-      'react/jsx-no-undef': ['error'],
-      'react/jsx-indent': [
-        'error',
-        2,
-      ],
-      'react/jsx-indent-props': [
-        'error',
-        2,
-      ],
-      'react/jsx-pascal-case': [
-        'error',
-        {
-          allowAllCaps: false,
-          ignore: [],
-        },
-      ],
-      'react/jsx-filename-extension': [
-        'error',
-        {
-          extensions: [
-            '.tsx',
-          ],
-        },
-      ],
-      'react/jsx-uses-react': ['off'], // @see https://reactjs.org/blog/2020/09/22/introducing-the-new-jsx-transform.html
-      'react/jsx-uses-vars': ['error'],
-      'react/no-danger-with-children': ['error'],
-      'react/jsx-max-depth': [0],
-      'react/no-is-mounted': ['error'],
-      'react/no-typos': ['error'],
-      'react/react-in-jsx-scope': ['off'], // @see https://reactjs.org/blog/2020/09/22/introducing-the-new-jsx-transform.html
-      'react/require-render-return': ['error'],
-      'react/style-prop-object': ['error'],
-      'react/jsx-newline': ['off'],
-      'react/jsx-no-constructed-context-values': ['error'],
-      'react/sort-comp': ['off'],
-      'react/no-multi-comp': ['off'],
-      'react/destructuring-assignment': 'off',
-      'react/prefer-stateless-function': [
-        'error', {
-          ignorePureComponents: true,
-        },
-      ],
-      'react/function-component-definition': [
-        'error',
-        {
-          namedComponents: 'arrow-function',
-          unnamedComponents: 'arrow-function',
-        },
-      ],
-      'react/jsx-curly-brace-presence': ['off'],
-      'react/jsx-one-expression-per-line': ['off'],
-      'react/no-set-state': 'off',
-      'react/forbid-component-props': 'off',
-      'react/jsx-props-no-spreading': 'off',
-      'react/button-has-type': 'off',
-      'react/jsx-no-leaked-render': 'off',
-      'react/jsx-no-useless-fragment': 'off',
-    }
-    : {}),
+    },
+  ],
+  'react/jsx-uses-react': ['off'], // @see https://reactjs.org/blog/2020/09/22/introducing-the-new-jsx-transform.html
+  'react/jsx-uses-vars': ['error'],
+  'react/no-danger-with-children': ['error'],
+  'react/jsx-max-depth': [0],
+  'react/no-is-mounted': ['error'],
+  'react/no-typos': ['error'],
+  'react/react-in-jsx-scope': ['off'], // @see https://reactjs.org/blog/2020/09/22/introducing-the-new-jsx-transform.html
+  'react/require-render-return': ['error'],
+  'react/style-prop-object': ['error'],
+  'react/jsx-newline': ['off'],
+  'react/jsx-no-constructed-context-values': ['error'],
+  'react/sort-comp': ['off'],
+  'react/no-multi-comp': ['off'],
+  'react/destructuring-assignment': 'off',
+  'react/prefer-stateless-function': [
+    'error', {
+      ignorePureComponents: true,
+    },
+  ],
+  'react/function-component-definition': [
+    'error',
+    {
+      namedComponents: 'arrow-function',
+      unnamedComponents: 'arrow-function',
+    },
+  ],
+  'react/jsx-curly-brace-presence': ['off'],
+  'react/jsx-one-expression-per-line': ['off'],
+  'react/no-set-state': 'off',
+  'react/forbid-component-props': 'off',
+  'react/jsx-props-no-spreading': 'off',
+  'react/button-has-type': 'off',
+  'react/jsx-no-leaked-render': 'off',
+  'react/jsx-no-useless-fragment': 'off',
+  'react/jsx-no-bind': ['error', {
+    ignoreRefs: true,
+    allowArrowFunctions: false,
+    allowFunctions: false,
+    allowBind: false,
+  }],
 };
 
 const tsRules = {
   ...jsRules,
-  // ...eslintPluginImport.configs.typescript.rules,
+  ...pluginImport.configs.typescript.rules,
   ...pluginTS.configs['eslint-recommended'].rules,
   ...pluginTS.configs['recommended'].rules,
   ...pluginTS.configs['recommended-requiring-type-checking'].rules,
-
 
   '@typescript-eslint/no-misused-promises': 'off',
   '@typescript-eslint/consistent-type-imports': [
@@ -610,13 +599,11 @@ const configArray = [
       reportUnusedDisableDirectives: 'error',
     },
     settings: {
-      // ...eslintPluginImport.configs.typescript.settings,
+      ...pluginImport.configs.typescript.settings,
       vitest: {
         typecheck: true,
       },
-      react: {
-        version: 'detect',
-      },
+      react: { version: '19' }, // Avoids auto-detection crash
       'import/parsers': {
         '@typescript-eslint/parser': ['.ts', '.tsx'],
       },
@@ -692,7 +679,7 @@ const configArray = [
     ignores: ['**/node_modules/**', '**/dist/**', '**/eslint.config.js'],
     languageOptions: {
       parserOptions: {
-        ecmaVersion: 12,
+        ecmaVersion: 'latest',
       },
     },
     plugins: {

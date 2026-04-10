@@ -1,3 +1,3 @@
-import eslintConfigLsp from './src/eslint.config.js';
+import config from './src/eslint.config.js';
 
-export default eslintConfigLsp;
+export default config;

@@ -1,6 +1,6 @@
 {
   "name": "@gen-epix/generate-api",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "license": "EUPL-1.2",
   "publishConfig": {
     "access": "public"
@@ -30,7 +30,7 @@
     "@openapitools/openapi-generator-cli": "catalog:"
   },
   "dependencies": {
-    "@gen-epix/tools-lib": "*",
+    "@gen-epix/tools-lib": "workspace:",
     "@openapitools/openapi-generator-cli": "catalog:",
     "formdata-polyfill": "4.0.10",
     "node-fetch": "3.3.2",

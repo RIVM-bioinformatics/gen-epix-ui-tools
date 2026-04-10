@@ -1,3 +1,3 @@
-import eslintConfigLsp from '@gen-epix/eslint-config';
+import config from '@gen-epix/eslint-config';
 
-export default eslintConfigLsp;
+export default config;

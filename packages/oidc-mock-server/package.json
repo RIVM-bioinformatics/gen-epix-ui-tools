@@ -1,6 +1,6 @@
 {
   "name": "@gen-epix/oidc-mock-server",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "license": "EUPL-1.2",
   "publishConfig": {
     "access": "public"
@@ -26,7 +26,7 @@
     "oidc-mock-server": "bin/oidc-mock-server.js"
   },
   "dependencies": {
-    "@gen-epix/tools-lib": "*",
+    "@gen-epix/tools-lib": "workspace:",
     "basic-auth": "2.0.1",
     "oauth2-mock-server": "8.2.2"
   },
