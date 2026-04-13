@@ -1,21 +1,73 @@
-import { createRequire } from 'node:module';
-
 import globals from 'globals';
 import js from '@eslint/js';
+import eslintReact from '@eslint-react/eslint-plugin';
+import eslintReactKit from '@eslint-react/kit';
 import * as parserTS from '@typescript-eslint/parser';
 import pluginTS from '@typescript-eslint/eslint-plugin';
 import pluginImport from 'eslint-plugin-import';
 import pluginImportNewlines from 'eslint-plugin-import-newlines';
 import pluginPerfectionist from 'eslint-plugin-perfectionist';
 import pluginPreferArrow from 'eslint-plugin-prefer-arrow';
-import pluginReact from 'eslint-plugin-react';
-import pluginReactHooks from 'eslint-plugin-react-hooks';
-import pluginReactRefresh from 'eslint-plugin-react-refresh';
 import pluginJsxA11y from 'eslint-plugin-jsx-a11y';
+import pluginReactRefresh from 'eslint-plugin-react-refresh';
 import pluginStylistic from '@stylistic/eslint-plugin';
 import pluginVitest from '@vitest/eslint-plugin';
 
-const packageRequire = createRequire(import.meta.url);
+import { checkedRequiresOnchangeOrReadonly } from './custom-rules/checked-requires-onchange-or-readonly.js';
+import { forbidComponentProps } from './custom-rules/forbid-component-props.js';
+import { forbidDomProps } from './custom-rules/forbid-dom-props.js';
+import { forbidElements } from './custom-rules/forbid-elements.js';
+import { functionComponentDefinition } from './custom-rules/function-component-definition.js';
+import { jsxBooleanValue } from './custom-rules/jsx-boolean-value.js';
+import { jsxFragments } from './custom-rules/jsx-fragments.js';
+import { jsxHandlerNames } from './custom-rules/jsx-handler-names.js';
+import { jsxNoBind } from './custom-rules/jsx-no-bind.js';
+import { jsxNoDuplicateProps } from './custom-rules/jsx-no-duplicate-props.js';
+import { jsxNoLiterals } from './custom-rules/jsx-no-literals.js';
+import { jsxPascalCase } from './custom-rules/jsx-pascal-case.js';
+import { jsxPropsNoSpreadMulti } from './custom-rules/jsx-props-no-spread-multi.js';
+import { noAdjacentInlineElements } from './custom-rules/no-adjacent-inline-elements.js';
+import { noMultiComp } from './custom-rules/no-multi-comp.js';
+
+const eslintReactKitConfig = eslintReactKit()
+  .use(checkedRequiresOnchangeOrReadonly)
+  .use(forbidComponentProps, {
+    forbidden: [],
+  })
+  .use(forbidDomProps, {
+    forbidden: [],
+  })
+  .use(forbidElements, {
+    forbidden: new Map(),
+  })
+  .use(functionComponentDefinition)
+  .use(jsxBooleanValue)
+  .use(jsxFragments)
+  .use(jsxHandlerNames, {
+    eventHandlerPrefix: 'on',
+    eventHandlerPropPrefix: 'on',
+  })
+  .use(jsxNoBind, {
+    allowArrowFunctions: false,
+    allowBind: false,
+    allowFunctions: false,
+    ignoreRefs: true,
+    requireUseCallback: true,
+  })
+  .use(jsxNoDuplicateProps)
+  .use(jsxNoLiterals, {
+    allowedStrings: [],
+    ignoreProps: false,
+    noStrings: false,
+  })
+  .use(jsxPascalCase, {
+    allowAllCaps: false,
+    allowLeadingUnderscore: false,
+  })
+  .use(jsxPropsNoSpreadMulti, {})
+  .use(noAdjacentInlineElements)
+  .use(noMultiComp)
+  .getConfig();
 
 const jsPlugins = {
   import: pluginImport,
@@ -27,16 +79,16 @@ const jsPlugins = {
 
 const tsPlugins = {
   ...jsPlugins,
+  '@eslint-react': eslintReact,
   '@typescript-eslint': pluginTS,
   ts: pluginTS,
 };
 
 const tsxPlugins = {
   ...tsPlugins,
-  react: pluginReact,
-  'react-hooks': pluginReactHooks,
-  'react-refresh': pluginReactRefresh,
+  ...eslintReactKitConfig.plugins,
   'jsx-a11y': pluginJsxA11y,
+  'react-refresh': pluginReactRefresh,
 };
 
 
@@ -74,14 +126,7 @@ const jsRules = {
     'error',
     1,
   ],
-  // BUG in @stylistic/type-annotation-spacing in combination with @stylistic/arrow-spacing causes incorrect errors
-  // '@stylistic/type-annotation-spacing': [
-  //   'error',
-  //   {
-  //     before: false,
-  //     after: true,
-  //   },
-  // ],
+  '@stylistic/comma-spacing': ['error', { before: false, after: true }],
   '@stylistic/arrow-spacing': ['error', { before: true, after: true }],
   '@stylistic/member-delimiter-style': ['error'],
   '@stylistic/semi': [
@@ -190,6 +235,52 @@ const jsRules = {
     prop: 'parens-new-line',
     propertyValue: 'parens-new-line',
   }],
+  // Keep the remaining @stylistic rules explicit without widening the current lint surface.
+  // @stylistic/type-annotation-spacing stays off because it conflicts with @stylistic/arrow-spacing in this repo.
+  '@stylistic/array-bracket-newline': 'off',
+  '@stylistic/array-bracket-spacing': 'off',
+  '@stylistic/array-element-newline': 'off',
+  '@stylistic/arrow-parens': 'off',
+  '@stylistic/comma-style': 'off',
+  '@stylistic/computed-property-spacing': 'off',
+  '@stylistic/curly-newline': 'off',
+  '@stylistic/dot-location': 'off',
+  '@stylistic/exp-jsx-props-style': 'off',
+  '@stylistic/exp-list-style': 'off',
+  '@stylistic/generator-star-spacing': 'off',
+  '@stylistic/implicit-arrow-linebreak': 'off',
+  '@stylistic/indent-binary-ops': 'off',
+  '@stylistic/jsx-indent': 'off',
+  '@stylistic/jsx-props-no-multi-spaces': 'off',
+  '@stylistic/keyword-spacing': 'off',
+  '@stylistic/line-comment-position': 'off',
+  '@stylistic/linebreak-style': 'off',
+  '@stylistic/lines-around-comment': 'off',
+  '@stylistic/lines-between-class-members': 'off',
+  '@stylistic/max-len': 'off',
+  '@stylistic/max-statements-per-line': 'off',
+  '@stylistic/multiline-comment-style': 'off',
+  '@stylistic/multiline-ternary': 'off',
+  '@stylistic/newline-per-chained-call': 'off',
+  '@stylistic/no-confusing-arrow': 'off',
+  '@stylistic/no-extra-parens': 'off',
+  '@stylistic/no-floating-decimal': 'off',
+  '@stylistic/no-mixed-operators': 'off',
+  '@stylistic/no-mixed-spaces-and-tabs': 'off',
+  '@stylistic/nonblock-statement-body-position': 'off',
+  '@stylistic/object-curly-newline': 'off',
+  '@stylistic/object-property-newline': 'off',
+  '@stylistic/one-var-declaration-per-line': 'off',
+  '@stylistic/operator-linebreak': 'off',
+  '@stylistic/padded-blocks': 'off',
+  '@stylistic/padding-line-between-statements': 'off',
+  '@stylistic/spaced-comment': 'off',
+  '@stylistic/type-annotation-spacing': 'off',
+  '@stylistic/type-generic-spacing': 'off',
+  '@stylistic/type-named-tuple-spacing': 'off',
+  '@stylistic/wrap-iife': 'off',
+  '@stylistic/wrap-regex': 'off',
+  '@stylistic/yield-star-spacing': 'off',
   'object-shorthand': ['error', 'always'],
   'default-case': ['error'],
   'prefer-exponentiation-operator': ['error'],
@@ -268,103 +359,106 @@ const jsRules = {
   'perfectionist/sort-maps': ['error'],
 };
 
+const eslintReactRules = {
+  '@eslint-react/component-hook-factories': 'error',
+  '@eslint-react/dom-no-dangerously-set-innerhtml': 'error',
+  '@eslint-react/dom-no-dangerously-set-innerhtml-with-children': 'error',
+  '@eslint-react/dom-no-find-dom-node': 'error',
+  '@eslint-react/dom-no-flush-sync': 'error',
+  '@eslint-react/dom-no-hydrate': 'error',
+  '@eslint-react/dom-no-missing-button-type': 'off',
+  '@eslint-react/dom-no-missing-iframe-sandbox': 'error',
+  '@eslint-react/dom-no-render': 'error',
+  '@eslint-react/dom-no-render-return-value': 'error',
+  '@eslint-react/dom-no-script-url': 'error',
+  '@eslint-react/dom-no-string-style-prop': 'error',
+  '@eslint-react/dom-no-unknown-property': 'error',
+  '@eslint-react/dom-no-unsafe-iframe-sandbox': 'error',
+  '@eslint-react/dom-no-unsafe-target-blank': 'error',
+  '@eslint-react/dom-no-use-form-state': 'error',
+  '@eslint-react/dom-no-void-elements-with-children': 'error',
+  '@eslint-react/dom-prefer-namespace-import': 'error',
+  '@eslint-react/error-boundaries': 'error',
+  '@eslint-react/exhaustive-deps': ['error', {
+    additionalHooks: 'useCleanupCallback',
+  }],
+  '@eslint-react/immutability': 'off',
+  '@eslint-react/jsx-no-children-prop': 'error',
+  '@eslint-react/jsx-no-children-prop-with-children': 'error',
+  '@eslint-react/jsx-no-comment-textnodes': 'error',
+  '@eslint-react/jsx-no-key-after-spread': 'error',
+  '@eslint-react/jsx-no-leaked-dollar': 'error',
+  '@eslint-react/jsx-no-leaked-semicolon': 'error',
+  '@eslint-react/jsx-no-namespace': 'error',
+  '@eslint-react/jsx-no-useless-fragment': 'off',
+  '@eslint-react/naming-convention-context-name': 'error',
+  '@eslint-react/naming-convention-id-name': 'error',
+  '@eslint-react/naming-convention-ref-name': 'error',
+  '@eslint-react/no-access-state-in-setstate': 'error',
+  '@eslint-react/no-array-index-key': 'error',
+  '@eslint-react/no-children-count': 'error',
+  '@eslint-react/no-children-for-each': 'error',
+  '@eslint-react/no-children-map': 'error',
+  '@eslint-react/no-children-only': 'error',
+  '@eslint-react/no-children-to-array': 'error',
+  '@eslint-react/no-class-component': 'error',
+  '@eslint-react/no-clone-element': 'error',
+  '@eslint-react/no-component-will-mount': 'error',
+  '@eslint-react/no-component-will-receive-props': 'error',
+  '@eslint-react/no-component-will-update': 'error',
+  '@eslint-react/no-context-provider': 'error',
+  '@eslint-react/no-create-ref': 'error',
+  '@eslint-react/no-direct-mutation-state': 'error',
+  '@eslint-react/no-duplicate-key': 'error',
+  '@eslint-react/no-forward-ref': 'error',
+  '@eslint-react/no-implicit-children': 'off',
+  '@eslint-react/no-implicit-key': 'off',
+  '@eslint-react/no-implicit-ref': 'off',
+  '@eslint-react/no-leaked-conditional-rendering': 'off',
+  '@eslint-react/no-missing-component-display-name': 'off',
+  '@eslint-react/no-missing-context-display-name': 'off',
+  '@eslint-react/no-missing-key': 'error',
+  '@eslint-react/no-misused-capture-owner-stack': 'error',
+  '@eslint-react/no-nested-component-definitions': 'error',
+  '@eslint-react/no-nested-lazy-component-declarations': 'error',
+  '@eslint-react/no-redundant-should-component-update': 'error',
+  '@eslint-react/no-set-state-in-component-did-mount': 'error',
+  '@eslint-react/no-set-state-in-component-did-update': 'error',
+  '@eslint-react/no-set-state-in-component-will-update': 'error',
+  '@eslint-react/no-unnecessary-use-callback': 'off',
+  '@eslint-react/no-unnecessary-use-memo': 'off',
+  '@eslint-react/no-unnecessary-use-prefix': 'error',
+  '@eslint-react/no-unsafe-component-will-mount': 'error',
+  '@eslint-react/no-unsafe-component-will-receive-props': 'error',
+  '@eslint-react/no-unsafe-component-will-update': 'error',
+  '@eslint-react/no-unstable-context-value': 'error',
+  '@eslint-react/no-unstable-default-props': 'error',
+  '@eslint-react/no-unused-class-component-members': 'error',
+  '@eslint-react/no-unused-props': 'off',
+  '@eslint-react/no-unused-state': 'error',
+  '@eslint-react/no-use-context': 'error',
+  '@eslint-react/prefer-destructuring-assignment': 'off',
+  '@eslint-react/prefer-namespace-import': 'error',
+  '@eslint-react/purity': 'error',
+  '@eslint-react/refs': 'error',
+  '@eslint-react/rsc-function-definition': 'error',
+  '@eslint-react/rules-of-hooks': 'error',
+  '@eslint-react/set-state-in-effect': 'off',
+  '@eslint-react/set-state-in-render': 'error',
+  '@eslint-react/unsupported-syntax': 'error',
+  '@eslint-react/use-memo': 'error',
+  '@eslint-react/use-state': 'error',
+  '@eslint-react/web-api-no-leaked-event-listener': 'error',
+  '@eslint-react/web-api-no-leaked-interval': 'error',
+  '@eslint-react/web-api-no-leaked-resize-observer': 'error',
+  '@eslint-react/web-api-no-leaked-timeout': 'error',
+};
+
 const tsxRules = {
   ...pluginReactRefresh.configs.recommended.rules,
   '@stylistic/jsx-sort-props': ['off'],
-  ...pluginReact.configs.flat.all.rules,
-  ...pluginReactHooks.configs.recommended.rules,
+  ...eslintReactKitConfig.rules,
   ...pluginJsxA11y.configs.recommended.rules,
-
-  // plugin: react-hooks
-  'react-hooks/set-state-in-effect': ['off'], // to many false positives
-  'react-hooks/immutability': ['off'], // to many false positives
-  'react-hooks/preserve-manual-memoization': ['off'], // to many false positives
-  'react-hooks/rules-of-hooks': ['error'],
-  'react-hooks/exhaustive-deps': ['error', {
-    additionalHooks: 'useCleanupCallback',
-  }],
-
-  // plugin: react
-  'react/display-name': ['off'],
-  'react/require-default-props': ['off'],
-  'react/no-unused-prop-types': ['off'],
-  'react/no-array-index-key': ['error'],
-  'react/forbid-foreign-prop-types': ['error', {
-    allowInPropTypes: true,
-  }],
-  'react/jsx-no-comment-textnodes': ['error'],
-  'react/jsx-no-duplicate-props': ['error'],
-  'react/jsx-equals-spacing': ['error', 'never'],
-  'react/jsx-handler-names': ['error',
-    {
-      eventHandlerPrefix: 'on',
-      eventHandlerPropPrefix: 'on',
-    },
-  ],
-  'react/jsx-no-undef': ['error'],
-  'react/jsx-indent': [
-    'error',
-    2,
-  ],
-  'react/jsx-indent-props': [
-    'error',
-    2,
-  ],
-  'react/jsx-pascal-case': [
-    'error',
-    {
-      allowAllCaps: false,
-      ignore: [],
-    },
-  ],
-  'react/jsx-filename-extension': [
-    'error',
-    {
-      extensions: [
-        '.tsx',
-      ],
-    },
-  ],
-  'react/jsx-uses-react': ['off'], // @see https://reactjs.org/blog/2020/09/22/introducing-the-new-jsx-transform.html
-  'react/jsx-uses-vars': ['error'],
-  'react/no-danger-with-children': ['error'],
-  'react/jsx-max-depth': [0],
-  'react/no-is-mounted': ['error'],
-  'react/no-typos': ['error'],
-  'react/react-in-jsx-scope': ['off'], // @see https://reactjs.org/blog/2020/09/22/introducing-the-new-jsx-transform.html
-  'react/require-render-return': ['error'],
-  'react/style-prop-object': ['error'],
-  'react/jsx-newline': ['off'],
-  'react/jsx-no-constructed-context-values': ['error'],
-  'react/sort-comp': ['off'],
-  'react/no-multi-comp': ['off'],
-  'react/destructuring-assignment': 'off',
-  'react/prefer-stateless-function': [
-    'error', {
-      ignorePureComponents: true,
-    },
-  ],
-  'react/function-component-definition': [
-    'error',
-    {
-      namedComponents: 'arrow-function',
-      unnamedComponents: 'arrow-function',
-    },
-  ],
-  'react/jsx-curly-brace-presence': ['off'],
-  'react/jsx-one-expression-per-line': ['off'],
-  'react/no-set-state': 'off',
-  'react/forbid-component-props': 'off',
-  'react/jsx-props-no-spreading': 'off',
-  'react/button-has-type': 'off',
-  'react/jsx-no-leaked-render': 'off',
-  'react/jsx-no-useless-fragment': 'off',
-  'react/jsx-no-bind': ['error', {
-    ignoreRefs: true,
-    allowArrowFunctions: false,
-    allowFunctions: false,
-    allowBind: false,
-  }],
 };
 
 const tsRules = {
@@ -373,6 +467,7 @@ const tsRules = {
   ...pluginTS.configs['eslint-recommended'].rules,
   ...pluginTS.configs['recommended'].rules,
   ...pluginTS.configs['recommended-requiring-type-checking'].rules,
+  ...eslintReactRules,
 
   '@typescript-eslint/no-misused-promises': 'off',
   '@typescript-eslint/consistent-type-imports': [
@@ -603,7 +698,6 @@ const configArray = [
       vitest: {
         typecheck: true,
       },
-      react: { version: '19' }, // Avoids auto-detection crash
       'import/parsers': {
         '@typescript-eslint/parser': ['.ts', '.tsx'],
       },

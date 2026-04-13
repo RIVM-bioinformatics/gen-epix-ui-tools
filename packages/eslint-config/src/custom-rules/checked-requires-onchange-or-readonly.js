@@ -1,0 +1,30 @@
+export const checkedRequiresOnchangeOrReadonly = () => {
+  return (context) => ({
+    JSXOpeningElement: (node) => {
+      const name = node.name.type === 'JSXIdentifier' ? node.name.name : null;
+
+      if (name !== 'input') {
+        return;
+      }
+
+      const attrs = new Set();
+
+      for (const attr of node.attributes) {
+        if (attr.type === 'JSXAttribute' && attr.name.type === 'JSXIdentifier') {
+          attrs.add(attr.name.name);
+        }
+      }
+
+      if (!attrs.has('checked')) {
+        return;
+      }
+
+      if (!attrs.has('onChange') && !attrs.has('readOnly')) {
+        context.report({
+          message: '`checked` requires `onChange` or `readOnly`.',
+          node,
+        });
+      }
+    },
+  });
+};
