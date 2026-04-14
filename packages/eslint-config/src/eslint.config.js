@@ -732,7 +732,7 @@ const configArray = [
     },
   },
   {
-    files: ['**/*.test.ts', '**/*.test.tsx', '**/test/setup.ts'],
+    files: ['**/*.test.ts', '**/*.test.tsx', '**/test/setup/**/*.ts'],
     ignores: ['**/node_modules/**', '**/dist/**'],
     languageOptions: {
       globals: {
