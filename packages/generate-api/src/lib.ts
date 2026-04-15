@@ -42,16 +42,14 @@ const sanitizeJsonAttributes = (leaf: JSONObject): JSONObject => {
     delete leaf.const;
     delete leaf.uniqueItems;
     delete leaf.propertyNames;
+    delete leaf.contentMediaType;
+    delete leaf.contentSchema;
     for (const key in leaf) {
       const value = leaf[key];
 
       // remove the user property from responses
       if (!isNaN(Number(key))) {
         delete (value as { user: string }).user;
-      }
-
-      if (leaf.contentMediaType) {
-        delete leaf.contentMediaType;
       }
 
       if (key === 'operationId') {
@@ -69,7 +67,7 @@ const sanitizeJsonAttributes = (leaf: JSONObject): JSONObject => {
         const replacementValue = (value as AnyOfLeaf).find(x => x.type !== 'null');
         replacementValue.type = replacementValue.$ref ? undefined : replacementValue.type || 'object';
         replacementValue.nullable = true;
-        return replacementValue;
+        return sanitizeJsonAttributes(replacementValue);
       }
 
       if (key === 'prefixItems') {
