@@ -21,7 +21,9 @@
     "lint": "eslint ./src --report-unused-disable-directives --max-warnings 0",
     "check-types": "tsc --noemit",
     "build": "rimraf ./bin && rollup -c && chmod +x ./bin/generate-api.js",
-    "generate-api": "vite-node --loader ts-node/esm ./src/generate-api.ts ../../../gen-epix-ui/src/api"
+    "generate-api-casedb": "vite-node --loader ts-node/esm ./src/generate-api.ts CASEDB https://127.0.0.1:8000/openapi.json ../../../gen-epix-ui/packages/api-casedb/src",
+    "generate-api-seqdb": "vite-node --loader ts-node/esm ./src/generate-api.ts SEQDB https://127.0.0.1:8001/openapi.json ../../../gen-epix-ui/packages/api-seqdb/src",
+    "generate-api-omopdb": "vite-node --loader ts-node/esm ./src/generate-api.ts OMOPDB https://127.0.0.1:8002/openapi.json ../../../gen-epix-ui/packages/api-omopdb/src"
   },
   "bin": {
     "generate-api": "bin/generate-api.js"

@@ -7,9 +7,30 @@ import { Agent } from 'https';
 import fetch from 'node-fetch';
 import type { OpenAPIV3_1 } from 'openapi-types';
 
+export enum APP {
+  CASEDB = 'CASEDB',
+  OMOPDB = 'OMOPDB',
+  SEQDB = 'SEQDB',
+}
 export type AnyOfItem = { $ref: string; nullable: boolean; type: string };
 export type AnyOfLeaf = AnyOfItem[];
+
 export type JSONObject = { [key: string]: JSONObject } | boolean | JSONObject[] | number | string;
+
+
+const appTypeToApiPrefix = (appType: APP): string => {
+  switch (appType) {
+    case APP.CASEDB:
+      return 'CaseDb';
+    case APP.OMOPDB:
+      return 'OmopDb';
+    case APP.SEQDB:
+      return 'SeqDb';
+    default:
+      console.error(`Invalid app type: ${appType as string}`);
+      process.exit(1);
+  }
+};
 
 const sanitizeJsonAttributes = (leaf: JSONObject): JSONObject => {
   if (Array.isArray(leaf)) {
@@ -27,6 +48,10 @@ const sanitizeJsonAttributes = (leaf: JSONObject): JSONObject => {
       // remove the user property from responses
       if (!isNaN(Number(key))) {
         delete (value as { user: string }).user;
+      }
+
+      if (leaf.contentMediaType) {
+        delete leaf.contentMediaType;
       }
 
       if (key === 'operationId') {
@@ -104,11 +129,14 @@ export * from "./base";
 `);
 };
 
-export const sanitizeCommonTs = (commonTsPath: string): void => {
+export const sanitizeCommonTs = (commonTsPath: string, appType: APP): void => {
+  const apiPrefix = appTypeToApiPrefix(appType);
+
   sanitizeTs(commonTsPath, content => content
     .replace('/* tslint:disable */\n/* eslint-disable */', '/* eslint-disable */\n// @ts-nocheck')
-    .replace(`import type { AxiosInstance, AxiosResponse } from 'axios';`, `import { type AxiosInstance, type AxiosResponse, type AxiosRequestConfig, isAxiosError } from 'axios';`)
-    .replace('import { RequiredError } from "./base";', 'import { BaseAPI, RequiredError } from "./base";')
+    .replace('import { RequiredError } from "./base";', `import { ${apiPrefix}BaseAPI, RequiredError } from "./base";`)
+    .replace(`import type { AxiosInstance, AxiosResponse } from 'axios';`, `import type { AxiosInstance, AxiosResponse, AxiosRequestConfig } from 'axios';
+import { isAxiosError } from 'axios';`)
     .replace(', basePath: string = BASE_PATH', '')
     .replace('BASE_PATH: string, ', '')
     .replace('export const createRequestFunction = function (axiosArgs: RequestArgs, globalAxios: AxiosInstance, configuration?: Configuration) {', 'export const createRequestFunction = function (axiosArgs: RequestArgs, globalAxios: AxiosInstance, _configuration?: Configuration) {')
@@ -116,8 +144,8 @@ export const sanitizeCommonTs = (commonTsPath: string): void => {
   const axiosRequestArgs: AxiosRequestConfig = {
     ...axiosArgs.options,
     url: axiosArgs.url,
-    timeout: BaseAPI.defaultRequestTimeout,
-    baseURL: BaseAPI.baseUrl,
+    timeout: ${apiPrefix}BaseAPI.defaultRequestTimeout,
+    baseURL: ${apiPrefix}BaseAPI.baseUrl,
     headers: {
       ...(axiosArgs.options.headers || {}),
     },
@@ -143,13 +171,15 @@ export const sanitizeConfigurationTs = (configurationTsPath: string): void => {
         this.defaultRequestTimeout = param.defaultRequestTimeout;`));
 };
 
-export const sanitizeBaseTs = (baseTsPath: string): void => {
+export const sanitizeBaseTs = (baseTsPath: string, appType: APP): void => {
+  const apiPrefix = appTypeToApiPrefix(appType);
+
   sanitizeTs(baseTsPath, content => content
     .replace('/* tslint:disable */\n/* eslint-disable */', '/* eslint-disable */')
     .replace(/export const BASE_PATH.*/, 'export const BASE_PATH = "";')
     .replace('import type { Configuration }', 'import { Configuration }')
-    .replace(`import type { AxiosPromise, AxiosInstance, RawAxiosRequestConfig } from 'axios';`, `import type { AxiosPromise, AxiosInstance, RawAxiosRequestConfig, InternalAxiosRequestConfig, AxiosResponse } from 'axios';`)
-    .replace(/export class BaseAPI {[\s\S]*};/gm, `export class BaseAPI {
+    .replace(`import type { AxiosPromise, AxiosInstance, AxiosRequestConfig } from 'axios';`, `import type { AxiosInstance, AxiosRequestConfig, AxiosResponse, InternalAxiosRequestConfig } from 'axios';`)
+    .replace(/export class BaseAPI {[\s\S]*};/gm, `export class ${apiPrefix}BaseAPI {
     public static defaultRequestTimeout: number;
     public static baseUrl: string;
     public static onRequest: Array<(request: InternalAxiosRequestConfig) => InternalAxiosRequestConfig<unknown>> = [];
@@ -162,23 +192,23 @@ export const sanitizeBaseTs = (baseTsPath: string): void => {
     public constructor() {
       this.axios = globalAxios.create();
       this.axios.interceptors.request.use(request => {
-        if (BaseAPI.onRequest?.length) {
-          return BaseAPI.onRequest.reduce((prev, curr) => {
+        if (${apiPrefix}BaseAPI.onRequest?.length) {
+          return ${apiPrefix}BaseAPI.onRequest.reduce((prev, curr) => {
             return curr(prev);
           }, request);
         }
         return request;
       });
       this.axios.interceptors.response.use(response => {
-        if (BaseAPI.onResponseFulfilled?.length) {
-          BaseAPI.onResponseFulfilled.reduce((prev, curr) => {
+        if (${apiPrefix}BaseAPI.onResponseFulfilled?.length) {
+          ${apiPrefix}BaseAPI.onResponseFulfilled.reduce((prev, curr) => {
             return curr(prev);
           }, response)
         }
         return response;
       }, (err: unknown) => {
-        if (BaseAPI.onResponseRejected?.length) {
-          BaseAPI.onResponseRejected.forEach(cb => cb(err));
+        if (${apiPrefix}BaseAPI.onResponseRejected?.length) {
+          ${apiPrefix}BaseAPI.onResponseRejected.forEach(cb => cb(err));
         }
         return err;
       });
@@ -187,32 +217,53 @@ export const sanitizeBaseTs = (baseTsPath: string): void => {
 `));
 };
 
-export const sanitizeApiTs = (apiTsPath: string, reservedWords: string[], reservedWordPrefix: string): void => {
+export const sanitizeApiTs = (apiTsPath: string, appType: APP, reservedWords: string[], reservedWordPrefix: string): void => {
+  const apiPrefix = appTypeToApiPrefix(appType);
+
   sanitizeTs(apiTsPath, content => {
     let newContent = content
       .replace('/* tslint:disable */\n/* eslint-disable */', '/* eslint-disable */\n// @ts-nocheck')
-      .replace(/export const (.*?)ApiAxiosParamCreator/g, 'const $1ApiAxiosParamCreator')
+      .replace(/export const (.*?)ApiAxiosParamCreator/g, `const ${apiPrefix}$1ApiAxiosParamCreator`)
+      .replace(/const localVarAxiosParamCreator = (.*?)ApiAxiosParamCreator\(configuration\)/g, `const localVarAxiosParamCreator = ${apiPrefix}$1ApiAxiosParamCreator(configuration)`)
       .replace(/BASE_PATH, configuration/g, 'configuration')
-      .replace(/export const (.*?)ApiFp/g, 'const $1ApiFp')
+      .replace(/export const (.*?)ApiFp/g, `const ${apiPrefix}$1ApiFp`)
+      .replace(/return (.*?)ApiFp\(this.configuration\)/g, `return ${apiPrefix}$1ApiFp(this.configuration)`)
       // NOTE: disable the use of cascading because of cash invalidation problems
       .replace(/cascade\?: boolean/g, 'cascade?: false')
       .replace(/Enum|enum/g, '')
       .replace('setApiKeyToObject, setBasicAuthToObject, setBearerAuthToObject, setOAuthToObject, ', '')
+      .replace(/\* @memberof (.*?)Api/g, `* @memberof ${apiPrefix}$1Api`)
       .replace(/export const (.*)ApiFactory[\s\S]*?object-oriented interface/g, `
 /**
- * $1Api - object-oriented interface
-`).replace(/export class (.*)Api extends BaseAPI {/g, `export class $1Api extends BaseAPI {
-  private static __instance: $1Api;
-  public static get instance(): $1Api {
-    $1Api.__instance = $1Api.__instance || new $1Api();
-    return $1Api.__instance;
+ * ${apiPrefix}$1Api - object-oriented interface
+`).replace(/export class (.*)Api extends BaseAPI {/g, `export class ${apiPrefix}$1Api extends BaseAPI {
+  private static __instance: ${apiPrefix}$1Api;
+  public static get instance(): ${apiPrefix}$1Api {
+    ${apiPrefix}$1Api.__instance = ${apiPrefix}$1Api.__instance || new ${apiPrefix}$1Api();
+    return ${apiPrefix}$1Api.__instance;
   }
-`).replace(/this\.basePath/g, 'this.configuration.baseUrl');
+`).replace(/this\.basePath/g, 'this.configuration.baseUrl')
+      .replace(/BaseAPI/g, `${apiPrefix}BaseAPI`);
 
     reservedWords.forEach(word => {
       const regex = new RegExp(`\\b${word}\\b`, 'g');
       newContent = newContent.replace(regex, `${reservedWordPrefix}${String(word).charAt(0).toUpperCase() + String(word).slice(1)}`);
     });
+
+    // get all matches of:
+    // "export type (\w)" and "export interface (\w)" and prefix all occurrences of the captured word with the api prefix, do this once per captured word
+    const typeInterfaceRegex = /export (type|interface) (\w+)/g;
+    const matches = newContent.matchAll(typeInterfaceRegex);
+    const capturedWords = new Set<string>();
+    for (const match of matches) {
+      const capturedWord = match[2];
+      if (!capturedWords.has(capturedWord)) {
+        const regex = new RegExp(`\\b${capturedWord}\\b`, 'g');
+        newContent = newContent.replace(regex, `${apiPrefix}${capturedWord}`);
+        capturedWords.add(capturedWord);
+      }
+    }
+
 
     return newContent;
   });

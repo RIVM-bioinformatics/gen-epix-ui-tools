@@ -14,6 +14,7 @@ import { tmpdir } from 'os';
 import { createRequire } from 'module';
 
 import {
+  APP,
   fetchOpenApiJson,
   sanitizeApiTs,
   sanitizeBaseTs,
@@ -23,17 +24,35 @@ import {
   sanitizeOpenApiJson,
 } from './lib';
 
-if (process.argv.length !== 3) {
-  console.error('Usage: generate-api <targetDir>');
+const appTypeStringToEnum = (appTypeString: string): APP => {
+  switch (appTypeString) {
+    case 'CASEDB':
+      return APP.CASEDB;
+    case 'OMOPDB':
+      return APP.OMOPDB;
+    case 'SEQDB':
+      return APP.SEQDB;
+    default:
+      console.error(`Invalid app type: ${appTypeString}`);
+      process.exit(1);
+  }
+};
+
+const appTypesString = Object.values(APP).join('|');
+
+if (process.argv.length !== 5) {
+  console.error(`Usage: generate-api <${appTypesString}> <url> <targetDir>`);
   process.exit(1);
 }
 
-const targetDir = path.join(process.cwd(), process.argv[2]);
+const appType = appTypeStringToEnum(process.argv[2]);
+const url = process.argv[3];
+const targetDir = path.join(process.cwd(), process.argv[4]);
 const tempDir = mkdtempSync(path.join(tmpdir(), 'gen-epix-generate-api-'));
 
 // STEP 1: fetch json, sanitize it and write it to a file
 // eslint-disable-next-line @typescript-eslint/no-floating-promises
-fetchOpenApiJson('https://127.0.0.1:8000/openapi.json').catch((error: unknown) => {
+fetchOpenApiJson(url).catch((error: unknown) => {
   console.error('Error fetching OpenAPI JSON:', error);
   process.exit(1);
 }).then(jsonContent => {
@@ -59,10 +78,10 @@ fetchOpenApiJson('https://127.0.0.1:8000/openapi.json').catch((error: unknown) =
   // STEP 3: post process the generated api
   console.log('Patching generated API files...');
   sanitizeIndexTs(path.join(generatedApiTargetDir, 'index.ts'));
-  sanitizeCommonTs(path.join(generatedApiTargetDir, 'common.ts'));
+  sanitizeCommonTs(path.join(generatedApiTargetDir, 'common.ts'), appType);
   sanitizeConfigurationTs(path.join(generatedApiTargetDir, 'configuration.ts'));
-  sanitizeBaseTs(path.join(generatedApiTargetDir, 'base.ts'));
-  sanitizeApiTs(path.join(generatedApiTargetDir, 'api.ts'), ['Subject', 'Filter'], 'Epi');
+  sanitizeBaseTs(path.join(generatedApiTargetDir, 'base.ts'), appType);
+  sanitizeApiTs(path.join(generatedApiTargetDir, 'api.ts'), appType, ['Subject', 'Filter'], 'Epi');
 
   // STEP 4: copy the generated files to the target directory
   console.log('Ensuring target directory exists:', targetDir);
