@@ -1,6 +1,6 @@
 {
   "name": "@gen-epix/generate-api",
-  "version": "0.2.2",
+  "version": "0.2.4",
   "license": "EUPL-1.2",
   "publishConfig": {
     "access": "public"
@@ -14,7 +14,8 @@
   "homepage": "https://github.com/RIVM-bioinformatics/gen-epix",
   "type": "module",
   "files": [
-    "bin"
+    "bin",
+    "openapitools.json"
   ],
   "main": "bin/generate-api.js",
   "scripts": {

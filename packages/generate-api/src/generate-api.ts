@@ -12,6 +12,7 @@ import {
 import { execSync } from 'child_process';
 import { tmpdir } from 'os';
 import { createRequire } from 'module';
+import { fileURLToPath } from 'url';
 
 import {
   APP,
@@ -49,8 +50,29 @@ const appType = appTypeStringToEnum(process.argv[2]);
 const url = process.argv[3];
 const targetDir = path.join(process.cwd(), process.argv[4]);
 const tempDir = mkdtempSync(path.join(tmpdir(), 'gen-epix-generate-api-'));
+const require = createRequire(import.meta.url);
 
-// STEP 1: fetch json, sanitize it and write it to a file
+
+// STEP 1: copy the openapitools.json configuration file for the openapi-generator-cli
+// If we don't do this the openapi-generator-cli will create it's own configuration which may be off a different version than the one we have in our package, which can lead to unexpected behavior.
+// By copying our configuration file to the current working directory, we ensure that the openapi-generator-cli uses our specified configuration.
+const openApiToolsConfigSourcePath = fileURLToPath(new URL('../openapitools.json', import.meta.url));
+const openApiToolsConfigDestPath = path.join(process.cwd(), 'openapitools.json');
+
+// if paths are the same, skip copying (this happens when the script is run from the generate-api package itself)
+if (openApiToolsConfigSourcePath === openApiToolsConfigDestPath) {
+  console.log('openapitools.json is already in the current working directory, skipping copy');
+} else {
+  if (existsSync(openApiToolsConfigDestPath)) {
+    console.log(`Removing existing openapitools.json at ${openApiToolsConfigDestPath}`);
+    unlinkSync(openApiToolsConfigDestPath);
+  }
+  console.log(`Copying openapitools.json to ${openApiToolsConfigDestPath}`);
+  cpSync(openApiToolsConfigSourcePath, openApiToolsConfigDestPath);
+}
+
+
+// STEP 2: fetch json, sanitize it and write it to a file
 // eslint-disable-next-line @typescript-eslint/no-floating-promises
 fetchOpenApiJson(url).catch((error: unknown) => {
   console.error('Error fetching OpenAPI JSON:', error);
@@ -63,8 +85,7 @@ fetchOpenApiJson(url).catch((error: unknown) => {
   writeFileSync(sanitizedOpenApiJsonPath, JSON.stringify(sanitizedOpenApiJson), 'utf-8');
 
 
-  // STEP 2: run the openapi-generator-cli to generate the API client
-  const require = createRequire(import.meta.url);
+  // STEP 3: run the openapi-generator-cli to generate the API client
   const openApiGeneratorCliBinPath = path.join(
     path.dirname(require.resolve('@openapitools/openapi-generator-cli/package.json')),
     'main.js',
@@ -75,7 +96,7 @@ fetchOpenApiJson(url).catch((error: unknown) => {
   console.log('Running command:', openApiGeneratorCommand);
   execSync(openApiGeneratorCommand, { stdio: 'inherit' });
 
-  // STEP 3: post process the generated api
+  // STEP 4: post process the generated api
   console.log('Patching generated API files...');
   sanitizeIndexTs(path.join(generatedApiTargetDir, 'index.ts'));
   sanitizeCommonTs(path.join(generatedApiTargetDir, 'common.ts'), appType);
@@ -83,7 +104,7 @@ fetchOpenApiJson(url).catch((error: unknown) => {
   sanitizeBaseTs(path.join(generatedApiTargetDir, 'base.ts'), appType);
   sanitizeApiTs(path.join(generatedApiTargetDir, 'api.ts'), appType, ['Subject', 'Filter'], 'Epi');
 
-  // STEP 4: copy the generated files to the target directory
+  // STEP 5: copy the generated files to the target directory
   console.log('Ensuring target directory exists:', targetDir);
   // Ensure the target directory exists
 
@@ -102,6 +123,6 @@ fetchOpenApiJson(url).catch((error: unknown) => {
     cpSync(path.join(generatedApiTargetDir, filename), path.join(targetDir, filename));
   });
 
-  // STEP 5: clean up the temporary directory
+  // STEP 6: clean up the temporary directory
   rmSync(tempDir, { force: true, recursive: true });
 });
