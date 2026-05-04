@@ -1,0 +1,40 @@
+{
+  "name": "@gen-epix/generate-common-api",
+  "version": "0.1.1",
+  "license": "EUPL-1.2",
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/RIVM-bioinformatics/gen-epix-ui-tools.git",
+    "directory": "packages/generate-common-api"
+  },
+  "author": "RIVM-bioinformatics <ids-bioinformatics@rivm.nl>",
+  "homepage": "https://github.com/RIVM-bioinformatics/gen-epix",
+  "type": "module",
+  "files": [
+    "bin"
+  ],
+  "main": "bin/generate-common-api.js",
+  "scripts": {
+    "lint": "eslint ./src --report-unused-disable-directives --max-warnings 0",
+    "check-types": "tsc --noemit",
+    "generate-common-api": "vite-node --loader ts-node/esm ./src/generate-common-api.ts",
+    "build": "rimraf ./bin && rollup -c && chmod +x ./bin/generate-common-api.js"
+  },
+  "bin": {
+    "generate-common-api": "bin/generate-common-api.js"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "@gen-epix/eslint-config": "workspace:",
+    "@types/node": "catalog:",
+    "eslint": "catalog:",
+    "rimraf": "catalog:",
+    "rollup": "catalog:",
+    "rollup-plugin-esbuild": "catalog:",
+    "typescript": "catalog:",
+    "vite-node": "catalog:"
+  }
+}
