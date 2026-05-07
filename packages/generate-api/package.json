@@ -1,6 +1,6 @@
 {
   "name": "@gen-epix/generate-api",
-  "version": "0.2.4",
+  "version": "0.3.0",
   "license": "EUPL-1.2",
   "publishConfig": {
     "access": "public"
