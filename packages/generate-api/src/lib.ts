@@ -131,37 +131,43 @@ export const sanitizeCommonTs = (commonTsPath: string, appType: APP): void => {
   const apiPrefix = appTypeToApiPrefix(appType);
 
   sanitizeTs(commonTsPath, content => content
-    .replace('/* tslint:disable */\n/* eslint-disable */', '/* eslint-disable */\n// @ts-nocheck')
+    .replace('/* tslint:disable */\n/* eslint-disable */', '/* eslint-disable */\n')
     .replace('import { RequiredError } from "./base";', `import { ${apiPrefix}BaseAPI, RequiredError } from "./base";`)
     .replace(`import type { AxiosInstance, AxiosResponse } from 'axios';`, `import type { AxiosInstance, AxiosResponse, AxiosRequestConfig } from 'axios';
 import { isAxiosError } from 'axios';`)
-    .replace(', basePath: string = BASE_PATH', '')
-    .replace('BASE_PATH: string, ', '')
-    .replace('export const createRequestFunction = function (axiosArgs: RequestArgs, globalAxios: AxiosInstance, configuration?: Configuration) {', 'export const createRequestFunction = function (axiosArgs: RequestArgs, globalAxios: AxiosInstance, _configuration?: Configuration) {')
-    .replace(/const axiosRequestArgs.*;$/gm, `
-  const axiosRequestArgs: AxiosRequestConfig = {
-    ...axiosArgs.options,
-    url: axiosArgs.url,
-    timeout: ${apiPrefix}BaseAPI.defaultRequestTimeout,
-    baseURL: ${apiPrefix}BaseAPI.baseUrl,
-    headers: {
-      ...(axiosArgs.options.headers || {}),
-    },
-    validateStatus: (code) => code >= 200 && code < 300,
-  };
-  `).replace('return axios.request<T, R>(axiosRequestArgs);', `
-  return axios.request<T, R>(axiosRequestArgs).then((res) => {
+    .replace(`export const createRequestFunction = function (axiosArgs: RequestArgs, globalAxios: AxiosInstance, BASE_PATH: string, configuration?: Configuration) {
+    return <T = unknown, R = AxiosResponse<T>>(axios: AxiosInstance = globalAxios, basePath: string = BASE_PATH) => {
+        const axiosRequestArgs = {...axiosArgs.options, url: (axios.defaults.baseURL ? '' : configuration?.basePath ?? basePath) + axiosArgs.url};
+        return axios.request<T, R>(axiosRequestArgs);
+    };
+}
+`, `export const createRequestFunction = function (axiosArgs: RequestArgs, globalAxios: AxiosInstance, _configuration?: Configuration) {
+  return async <T = unknown, R = AxiosResponse<T>>(axios: AxiosInstance = globalAxios, _basePath: string) => {
+
+    const axiosRequestArgs: AxiosRequestConfig = {
+      ...axiosArgs.options,
+      url: axiosArgs.url,
+      timeout: ${apiPrefix}BaseAPI.defaultRequestTimeout,
+      baseURL: ${apiPrefix}BaseAPI.baseUrl,
+      headers: {
+        ...(axiosArgs.options.headers || {}),
+      },
+      validateStatus: (code) => code >= 200 && code < 300,
+    };
+
+    const res = await axios.request<T, R>(axiosRequestArgs);
     if (isAxiosError(res)) {
       throw res;
     }
     return res;
-  });
-  `));
+  };
+}
+`));
 };
 
 export const sanitizeConfigurationTs = (configurationTsPath: string): void => {
   sanitizeTs(configurationTsPath, content => content
-    .replace('/* tslint:disable */\n/* eslint-disable */', '/* eslint-disable */\n// @ts-nocheck')
+    .replace('/* tslint:disable */\n/* eslint-disable */', '/* eslint-disable */')
     .replace(/basePath/g, 'baseUrl')
     .replace(/username\?: string;/g, `username?: string;
     defaultRequestTimeout?: number;`)
@@ -220,7 +226,8 @@ export const sanitizeApiTs = (apiTsPath: string, appType: APP, reservedWords: st
 
   sanitizeTs(apiTsPath, content => {
     let newContent = content
-      .replace('/* tslint:disable */\n/* eslint-disable */', '/* eslint-disable */\n// @ts-nocheck')
+      .replace('/* tslint:disable */\n/* eslint-disable */', '/* eslint-disable */')
+      // .replace(/, localVarOperationServerBasePath \|\| basePath/g, '')
       .replace(/export const (.*?)ApiAxiosParamCreator/g, `const ${apiPrefix}$1ApiAxiosParamCreator`)
       .replace(/const localVarAxiosParamCreator = (.*?)ApiAxiosParamCreator\(configuration\)/g, `const localVarAxiosParamCreator = ${apiPrefix}$1ApiAxiosParamCreator(configuration)`)
       .replace(/BASE_PATH, configuration/g, 'configuration')
@@ -236,9 +243,16 @@ export const sanitizeApiTs = (apiTsPath: string, appType: APP, reservedWords: st
  * ${apiPrefix}$1Api - object-oriented interface
 `).replace(/export class (.*)Api extends BaseAPI {/g, `export class ${apiPrefix}$1Api extends BaseAPI {
   private static __instance: ${apiPrefix}$1Api;
-  public static get instance(): ${apiPrefix}$1Api {
-    ${apiPrefix}$1Api.__instance = ${apiPrefix}$1Api.__instance || new ${apiPrefix}$1Api();
-    return ${apiPrefix}$1Api.__instance;
+    
+  public static getInstance(): ${apiPrefix}$1Api {
+    const hotData = (import.meta as { hot?: { data: { [key: string]: unknown } } }).hot?.data || undefined;
+    const instance = ${apiPrefix}$1Api.__instance ?? (hotData?.['${apiPrefix}$1Api'] as ${apiPrefix}$1Api) ?? new ${apiPrefix}$1Api();
+    if (hotData && !hotData['${apiPrefix}$1Api']) {
+      hotData['${apiPrefix}$1Api'] = instance;
+    }
+
+    ${apiPrefix}$1Api.__instance = instance;
+    return instance;
   }
 `).replace(/this\.basePath/g, 'this.configuration.baseUrl')
       .replace(/BaseAPI/g, `${apiPrefix}BaseAPI`);
