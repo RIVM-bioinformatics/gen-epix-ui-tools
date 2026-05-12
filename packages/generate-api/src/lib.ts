@@ -270,7 +270,10 @@ export const sanitizeApiTs = (apiTsPath: string, appType: APP, reservedWords: st
     for (const match of matches) {
       const capturedWord = match[2];
       if (!capturedWords.has(capturedWord)) {
-        const regex = new RegExp(`\\b${capturedWord}\\b`, 'g');
+        // Use negative lookbehind/lookahead to avoid replacing:
+        // - string literal values: 'UploadCasesCommand'
+        // - object literal keys of string enums: UploadCasesCommand: 'UploadCasesCommand'
+        const regex = new RegExp(`(?<!['"\`])\\b${capturedWord}\\b(?!\\s*:\\s*['"\`])`, 'g');
         newContent = newContent.replace(regex, `${apiPrefix}${capturedWord}`);
         capturedWords.add(capturedWord);
       }
