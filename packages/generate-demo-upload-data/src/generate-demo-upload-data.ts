@@ -5,8 +5,11 @@ import {
   mkdirSync,
   writeFileSync,
 } from 'fs';
-import * as path from 'path';
-import * as readline from 'readline';
+import {
+  join,
+  resolve,
+} from 'path';
+import { createInterface } from 'readline';
 
 import readExcelFile, { readSheet } from 'read-excel-file/node';
 
@@ -81,8 +84,8 @@ const getRandomLength = (min: number, max: number): number => {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 };// Simple column selection function
 const selectColumn = async (headers: string[], prompt: string): Promise<string> => {
-  return new Promise((resolve) => {
-    const rl = readline.createInterface({
+  return new Promise((resolvePromise) => {
+    const rl = createInterface({
       input: process.stdin,
       output: process.stdout,
     });
@@ -98,14 +101,14 @@ const selectColumn = async (headers: string[], prompt: string): Promise<string> 
 
       if (choice === 0) {
         console.log(`Skipping ${prompt}`);
-        resolve('');
+        resolvePromise('');
       } else if (choice >= 1 && choice <= headers.length) {
         const selected = headers[choice - 1];
         console.log(`Selected: ${selected}`);
-        resolve(selected);
+        resolvePromise(selected);
       } else {
         console.log('Invalid choice, skipping field');
-        resolve('');
+        resolvePromise('');
       }
 
       rl.close();
@@ -140,8 +143,8 @@ const parseArguments = (): Arguments => {
   }
 
   return {
-    input: path.resolve(inputPath),
-    output: path.resolve(outputPath),
+    input: resolve(inputPath),
+    output: resolve(outputPath),
   };
 };
 
@@ -185,7 +188,7 @@ const generateIndividualFiles = async (inputPath: string, outputPath: string, ma
         const randomLength = getRandomLength(100, 10000);
         const randomSequence = generateRandomSequence(randomLength);
         const filename = `id-${idValue}-col-${seqValue}.fa`;
-        const filePath = path.join(outputPath, filename);
+        const filePath = join(outputPath, filename);
         const fastaContent = `>${idValue}\n${randomSequence}\n`;
         writeFileSync(filePath, fastaContent);
         filesGenerated++;
@@ -199,7 +202,7 @@ const generateIndividualFiles = async (inputPath: string, outputPath: string, ma
         const randomLength = getRandomLength(100, 10000);
         const randomSequence = generateRandomSequence(randomLength);
         const filename = `id-${idValue}-col-${readValue}.fq`;
-        const filePath = path.join(outputPath, filename);
+        const filePath = join(outputPath, filename);
         const fastqContent = `@${idValue}\n${randomSequence}\n+\n${'I'.repeat(randomLength)}\n`;
         writeFileSync(filePath, fastqContent);
         filesGenerated++;
@@ -213,7 +216,7 @@ const generateIndividualFiles = async (inputPath: string, outputPath: string, ma
         const randomLength = getRandomLength(100, 10000);
         const randomSequence = generateRandomSequence(randomLength);
         const filename = `id-${idValue}-col-${readFwdValue}.fq`;
-        const filePath = path.join(outputPath, filename);
+        const filePath = join(outputPath, filename);
         const fastqContent = `@${idValue}\n${randomSequence}\n+\n${'I'.repeat(randomLength)}\n`;
         writeFileSync(filePath, fastqContent);
         filesGenerated++;
@@ -227,7 +230,7 @@ const generateIndividualFiles = async (inputPath: string, outputPath: string, ma
         const randomLength = getRandomLength(100, 10000);
         const randomSequence = generateRandomSequence(randomLength);
         const filename = `id-${idValue}-col-${readRevValue}.fq`;
-        const filePath = path.join(outputPath, filename);
+        const filePath = join(outputPath, filename);
         const fastqContent = `@${idValue}\n${randomSequence}\n+\n${'I'.repeat(randomLength)}\n`;
         writeFileSync(filePath, fastqContent);
         filesGenerated++;

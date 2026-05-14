@@ -23,12 +23,13 @@ import {
   isStringLiteral,
   ScriptKind,
   ScriptTarget,
-  type JsxChild,
-  type JsxTagNameExpression,
-  type Node,
-  type NodeArray,
 } from 'typescript';
-
+import type {
+  JsxChild,
+  JsxTagNameExpression,
+  Node,
+  NodeArray,
+} from 'typescript';
 import { findPackageRootPath } from '@gen-epix/tools-lib';
 
 type TranslationCounts = Record<string, { missing: number; stale: number }>;
@@ -237,7 +238,7 @@ for (const file of files) {
   const filePath = path.join(srcPath, file);
   const content = readFileSync(filePath, 'utf-8');
   for (const regex of regexes) {
-    let match: RegExpExecArray | null;
+    let match: null | RegExpExecArray;
     while ((match = regex.exec(content)) !== null) {
       newTranslations.add(match[1]);
     }

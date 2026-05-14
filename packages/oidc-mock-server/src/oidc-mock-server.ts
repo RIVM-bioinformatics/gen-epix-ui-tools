@@ -1,27 +1,33 @@
 #!/usr/bin/env node
 
 import { join } from 'path';
+import {
+  existsSync,
+  readFileSync,
+} from 'fs';
 
 import { OAuth2Server } from 'oauth2-mock-server';
 import basicAuth from 'basic-auth';
-
 import { findGitRootPath } from '@gen-epix/tools-lib';
-import { existsSync, readFileSync } from 'fs';
-import express, { json, urlencoded, type RequestHandler } from 'express';
+import type express from 'express';
+import {
+  json,
+  urlencoded,
+} from 'express';
+
+type Config = {
+  port: number;
+  scope: string;
+  token_time_out_seconds: number;
+  user: User;
+};
 
 type User = {
   email: string;
-  sub: string;
   first_name: string;
   last_name: string;
-}
-
-type Config = {
-  user: User;
-  port: number;
-  token_time_out_seconds: number;
-  scope: string;
-}
+  sub: string;
+};
 
 const DEFAULT_PORT = 5443;
 const DEFAULT_TOKEN_TIME_OUT_SECONDS = 3600;
@@ -60,7 +66,7 @@ if (!config.scope) {
   console.warn(`Scope not specified, using default scope "${DEFAULT_SCOPE}".`);
 }
 
-let user = { ...config.user ?? {} };
+const user = { ...config.user ?? {} };
 const PORT = config.port ?? DEFAULT_PORT;
 const TOKEN_TIME_OUT_SECONDS = config.token_time_out_seconds ?? DEFAULT_TOKEN_TIME_OUT_SECONDS;
 const SCOPE = config.scope ?? DEFAULT_SCOPE;
@@ -71,25 +77,25 @@ const server = new OAuth2Server(
 );
 
 interface Request {
-  headers?: {
-    authorization?: string | undefined;
-  };
   body?: {
     [key: string]: string;
   };
-}
-
-interface Token {
-  payload?: {
-    [key: string]: string | number;
+  headers?: {
+    authorization?: string | undefined;
   };
 }
 
 interface Response {
   body?: {
-    [key: string]: string | number | boolean;
+    [key: string]: boolean | number | string;
   };
   statusCode?: number;
+}
+
+interface Token {
+  payload?: {
+    [key: string]: number | string;
+  };
 }
 
 const exp = () => {
@@ -100,18 +106,18 @@ const exp = () => {
 const start = async () => {
   // Generate a new RSA key and add it to the keystore
   await server.issuer.keys.add({
-    kty: 'RSA',
-    use: 'sig',
     alg: 'RS256',
-    kid: 'd391d514-f82b-410e-b2bc-17c021b77e28',
     d: 'bEjBkAZf2SOKXVG7zwcuPsLb0k9cHIqddi_RgylWnsDcI2XG53HiOSMKpQ_sKjF1g4nUg9CvciC0-KYKE9UNmIzE6VY-I5DgbF5YIz_YVYOtNxZi7R66a_nAzeZfoxnjSNlfQFrbSqzTOU3EFw4irIjvSxAS8x4a79O3bw48j4C5Bk5PRnFq5AVkaLcS5_zd1DsHjvVn0PSvlKWwCU3PIkZu-OXleO2GHG6FIzzoKyGEl5LrRRygWcZzXUWDyMFpwKHnCHw32pFA_BGz1X2Cv7j4ajQjHItR3OgGncHWVVZIACFjqsm2q-a1NTJQWb6_smKRau2fM5elAR68rvsWmQ',
-    n: '606TR4ffMmg3NyqlgyC7vqYsO_Rok1jL7kmGA4nSyrbYtaq2L-6P5zDZPA9Sya4NEEQ_KtEhK73il0VY8sJg1Ohjq8nXBELjWG36syelQRAxhwmmv9VrJ4PFbW7pzGu4amGq8chuqsT_JM4tP_YrDv7enYV2XPTSQXe4yhIcYgIBwFYHP_XAb54sYns4q4vyMrH2MS4vfwhtaJ7s-5GsApU5kL-LpwklRxb1UE2tjh7pdRLwilSVhukOYz0Z9zZ2IXQ1xhn-6tQ-IRcJiVE0knWAXF28lpNLknnzdOF4NCCRohpHkA9Sc3ZhVRIbkG75SNFgSqXpl49JuxmmkLkqTw',
-    e: 'AQAB',
-    p: '9HHKBHUOyRhGo1Uf_v6ueGt-LUvM_um_XTrz0Pm8iQRKF3nQnpvKeWrRyMhbS1oUPtHc_GfwbmN1FzCmDzNN1M27jSALOTo57ewRoT8_NuqbRGsoaPrhLyCiQ-nm45OQS9wXgRSmHM-Nq2ZpGoFGciPIVWxBJRgZzIjUB5SsnFU',
-    q: '9m40oqwz1XO1JCROAxyVCaeeTF0VJQTaGVfNYSlqP2uKyyyy00iFrzsN4EPru9kvYYj-kYq9RKHP6y4z2vK4Yvik8XVZdVLzMKlj9-bqPOZ9iCHTKimMn4URzzklt7MWobc6tO06W8PDN3txhQkWmvJkQFuqDoxjU9FUKcnTUBM',
     dp: 'DbUPyf4ybQ5ib6hHWgo4CGKmua2FeknrRDQZFf_bFafa68QV8b70tKhLyUGK9QfBGOC1zqWZcuc62qkMts9-rs82lCxW1MeyFehl-K_OQKsZN9X2dySSWg0vbDWCkAJnVgmqe7-HrRfqbtEYVbcoFyBwjHG8mXLnh3OoyCALKd0',
     dq: 'kJvXM2aN_EIsGAtd5CGPq9y63eD5mYGhYqHNmait-o1nIxcV0TqLiGrFF8eDu_YVAc1cZZfevTmfQ0kXkPJCFYIHeNH-LwUARJwCV-Ufq6EuJQaEXgeHx8xUyR-l7IihTUCyqJ1VU6grFJHR6dmNdFutTL79qg_j8bmzA9q1sBU',
+    e: 'AQAB',
+    kid: 'd391d514-f82b-410e-b2bc-17c021b77e28',
+    kty: 'RSA',
+    n: '606TR4ffMmg3NyqlgyC7vqYsO_Rok1jL7kmGA4nSyrbYtaq2L-6P5zDZPA9Sya4NEEQ_KtEhK73il0VY8sJg1Ohjq8nXBELjWG36syelQRAxhwmmv9VrJ4PFbW7pzGu4amGq8chuqsT_JM4tP_YrDv7enYV2XPTSQXe4yhIcYgIBwFYHP_XAb54sYns4q4vyMrH2MS4vfwhtaJ7s-5GsApU5kL-LpwklRxb1UE2tjh7pdRLwilSVhukOYz0Z9zZ2IXQ1xhn-6tQ-IRcJiVE0knWAXF28lpNLknnzdOF4NCCRohpHkA9Sc3ZhVRIbkG75SNFgSqXpl49JuxmmkLkqTw',
+    p: '9HHKBHUOyRhGo1Uf_v6ueGt-LUvM_um_XTrz0Pm8iQRKF3nQnpvKeWrRyMhbS1oUPtHc_GfwbmN1FzCmDzNN1M27jSALOTo57ewRoT8_NuqbRGsoaPrhLyCiQ-nm45OQS9wXgRSmHM-Nq2ZpGoFGciPIVWxBJRgZzIjUB5SsnFU',
+    q: '9m40oqwz1XO1JCROAxyVCaeeTF0VJQTaGVfNYSlqP2uKyyyy00iFrzsN4EPru9kvYYj-kYq9RKHP6y4z2vK4Yvik8XVZdVLzMKlj9-bqPOZ9iCHTKimMn4URzzklt7MWobc6tO06W8PDN3txhQkWmvJkQFuqDoxjU9FUKcnTUBM',
     qi: 'WQ4ACd_4BiOLQ55Bc6GuAKNZk9VAaDw_4URzhL9kLI3vXm_3NvfpL5Locj7F3tq8WUhRvSCg0KPL1RHjYQaqqk7bwgZ1Tr1QWiRZeycR-gdzb3Oqbcxr3YgnJKhah5feWj2YlvQFiqNQdr1ZAA3FMy05MYepaTwT58hrYYExIFo',
+    use: 'sig',
   });
 
   server.service.on('beforeResponse', (tokenEndpointResponse: Response) => {
@@ -143,9 +149,9 @@ const start = async () => {
     console.log('Serving introspect');
     introspectResponse.body = {
       active: true,
-      scope: 'openid profile email offline_access',
       client_id: 'lsp_client_id',
       exp: exp(),
+      scope: 'openid profile email offline_access',
     };
   });
   const requestHandler = (server.service as unknown as { requestHandler: express.Express }).requestHandler;
@@ -162,7 +168,7 @@ const start = async () => {
       if (!updatedUser || Object.keys(updatedUser).length === 0) {
         return res.status(400).json({
           error: 'Bad Request',
-          message: 'Request body must contain at least one user field to update'
+          message: 'Request body must contain at least one user field to update',
         });
       }
 
@@ -171,7 +177,7 @@ const start = async () => {
         if (typeof updatedUser.email !== 'string' || !updatedUser.email.trim()) {
           return res.status(400).json({
             error: 'Bad Request',
-            message: 'Email must be a non-empty string'
+            message: 'Email must be a non-empty string',
           });
         }
         user.email = updatedUser.email.trim();
@@ -181,7 +187,7 @@ const start = async () => {
         if (typeof updatedUser.sub !== 'string' || !updatedUser.sub.trim()) {
           return res.status(400).json({
             error: 'Bad Request',
-            message: 'Sub must be a non-empty string'
+            message: 'Sub must be a non-empty string',
           });
         }
         user.sub = updatedUser.sub.trim();
@@ -191,7 +197,7 @@ const start = async () => {
         if (typeof updatedUser.first_name !== 'string' || !updatedUser.first_name.trim()) {
           return res.status(400).json({
             error: 'Bad Request',
-            message: 'First name must be a non-empty string'
+            message: 'First name must be a non-empty string',
           });
         }
         user.first_name = updatedUser.first_name.trim();
@@ -201,7 +207,7 @@ const start = async () => {
         if (typeof updatedUser.last_name !== 'string' || !updatedUser.last_name.trim()) {
           return res.status(400).json({
             error: 'Bad Request',
-            message: 'Last name must be a non-empty string'
+            message: 'Last name must be a non-empty string',
           });
         }
         user.last_name = updatedUser.last_name.trim();
@@ -211,13 +217,13 @@ const start = async () => {
 
       res.status(200).json({
         message: 'User updated successfully',
-        user: { ...user }
+        user: { ...user },
       });
     } catch (error) {
       console.error('Error updating user:', error);
       res.status(500).json({
         error: 'Internal Server Error',
-        message: 'Failed to update user'
+        message: 'Failed to update user',
       });
     }
   });
@@ -225,7 +231,7 @@ const start = async () => {
 
   // Start the server
   await server.start(PORT, '127.0.0.1');
-}
+};
 start().then(() => {
   console.log(`OIDC mock server started and listening on port ${PORT}, check https://localhost:5443/.well-known/openid-configuration`);
 }).catch((err) => {

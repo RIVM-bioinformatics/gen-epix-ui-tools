@@ -4,11 +4,12 @@ import eslintReact from '@eslint-react/eslint-plugin';
 import eslintReactKit from '@eslint-react/kit';
 import * as parserTS from '@typescript-eslint/parser';
 import pluginTS from '@typescript-eslint/eslint-plugin';
-import pluginImport from 'eslint-plugin-import';
+import pluginImportX from 'eslint-plugin-import-x';
 import pluginImportNewlines from 'eslint-plugin-import-newlines';
 import pluginPerfectionist from 'eslint-plugin-perfectionist';
 import pluginPreferArrow from 'eslint-plugin-prefer-arrow';
 import pluginJsxA11y from 'eslint-plugin-jsx-a11y';
+import pluginReactHooks from 'eslint-plugin-react-hooks';
 import pluginReactRefresh from 'eslint-plugin-react-refresh';
 import pluginStylistic from '@stylistic/eslint-plugin';
 import pluginVitest from '@vitest/eslint-plugin';
@@ -70,7 +71,7 @@ const eslintReactKitConfig = eslintReactKit()
   .getConfig();
 
 const jsPlugins = {
-  import: pluginImport,
+  'import-x': pluginImportX,
   'import-newlines': pluginImportNewlines,
   perfectionist: pluginPerfectionist,
   'prefer-arrow': pluginPreferArrow,
@@ -81,6 +82,7 @@ const tsPlugins = {
   ...jsPlugins,
   '@eslint-react': eslintReact,
   '@typescript-eslint': pluginTS,
+  'react-hooks': pluginReactHooks,
   ts: pluginTS,
 };
 
@@ -94,7 +96,6 @@ const tsxPlugins = {
 
 const jsRules = {
   ...js.configs.recommended.rules,
-  ...pluginImport.configs.recommended.rules,
   'no-nested-ternary': ['error'],
   curly: ['error', 'all'],
   'no-else-return': ['error'],
@@ -298,16 +299,6 @@ const jsRules = {
     },
   ],
 
-  // plugin: import
-  'import/no-named-as-default': ['off'],
-  'import/named': ['error'],
-  'import/no-default-export': ['off'],
-  'import/no-absolute-path': ['error'],
-  'import/first': ['error'],
-  'import/no-duplicates': ['error'],
-  'import/newline-after-import': ['error'],
-  'import/no-cycle': ['error', { ignoreExternal: false, maxDepth: 3 }],
-
   // plugin: perfectionist
   'perfectionist/sort-variable-declarations': ['error'],
   'perfectionist/sort-intersection-types': ['error'],
@@ -359,8 +350,101 @@ const jsRules = {
   'perfectionist/sort-maps': ['error'],
 };
 
+const importXRules = {
+  // plugin: import-x
+  // Helpful warnings
+  'import-x/export': 'error',
+  'import-x/no-deprecated': 'error',
+  'import-x/no-empty-named-blocks': 'error',
+  'import-x/no-extraneous-dependencies': 'error',
+  'import-x/no-mutable-exports': 'error',
+  'import-x/no-named-as-default': 'error',
+  'import-x/no-named-as-default-member': 'error',
+  'import-x/no-rename-default': 'off',
+  'import-x/no-unused-modules': 'off',
+
+  // Module systems
+  'import-x/no-amd': 'error',
+  'import-x/no-commonjs': 'error',
+  'import-x/no-import-module-exports': 'error',
+  'import-x/no-nodejs-modules': 'off',
+  'import-x/unambiguous': 'error',
+
+  // Static analysis
+  'import-x/default': 'error',
+  'import-x/named': 'error',
+  'import-x/namespace': 'error',
+  'import-x/no-absolute-path': 'error',
+  'import-x/no-cycle': ['error', { ignoreExternal: false, maxDepth: 3 }],
+  'import-x/no-dynamic-require': 'error',
+  'import-x/no-internal-modules': 'off',
+  'import-x/no-relative-packages': 'error',
+  'import-x/no-relative-parent-imports': 'off',
+  'import-x/no-restricted-paths': 'error',
+  'import-x/no-self-import': 'error',
+  'import-x/no-unresolved': 'error',
+  'import-x/no-useless-path-segments': 'error',
+  'import-x/no-webpack-loader-syntax': 'error',
+
+  // Style guide
+  'import-x/consistent-type-specifier-style': 'error',
+  'import-x/dynamic-import-chunkname': 'error',
+  'import-x/exports-last': 'off',
+  'import-x/extensions': 'error',
+  'import-x/first': 'error',
+  'import-x/group-exports': 'off',
+  'import-x/imports-first': 'error',
+  'import-x/max-dependencies': 'off',
+  'import-x/newline-after-import': 'error',
+  'import-x/no-anonymous-default-export': 'error',
+  'import-x/no-default-export': 'error',
+  'import-x/no-duplicates': 'error',
+  'import-x/no-named-default': 'error',
+  'import-x/no-named-export': 'off',
+  'import-x/no-namespace': 'error',
+  'import-x/no-unassigned-import': 'off',
+  'import-x/order': 'error',
+  'import-x/prefer-default-export': 'off',
+  'import-x/prefer-namespace-import': ['error', {
+    patterns: ['react', 'react-dom'],
+  }],
+};
+
+const reactHooksRules = {
+  'react-hooks/capitalized-calls': 'error',
+  'react-hooks/component-hook-factories': 'error',
+  'react-hooks/config': 'error',
+  'react-hooks/error-boundaries': 'error',
+  'react-hooks/exhaustive-deps': ['error', {
+    additionalHooks: 'useCleanupCallback',
+  }],
+  'react-hooks/exhaustive-effect-dependencies': 'error',
+  'react-hooks/fbt': 'error',
+  'react-hooks/gating': 'error',
+  'react-hooks/globals': 'error',
+  'react-hooks/hooks': 'error',
+  'react-hooks/immutability': 'error',
+  'react-hooks/incompatible-library': 'error',
+  'react-hooks/invariant': 'error',
+  'react-hooks/memo-dependencies': 'off', // causes to many false positives
+  'react-hooks/memoized-effect-dependencies': 'error',
+  'react-hooks/no-deriving-state-in-effects': 'error',
+  'react-hooks/preserve-manual-memoization': 'error',
+  'react-hooks/purity': 'error',
+  'react-hooks/refs': 'error',
+  'react-hooks/rule-suppression': 'error',
+  'react-hooks/rules-of-hooks': 'error',
+  'react-hooks/set-state-in-effect': 'off',
+  'react-hooks/set-state-in-render': 'error',
+  'react-hooks/static-components': 'error',
+  'react-hooks/syntax': 'off', // causes to many false positives
+  'react-hooks/todo': 'off',
+  'react-hooks/unsupported-syntax': 'error',
+  'react-hooks/use-memo': 'error',
+  'react-hooks/void-use-memo': 'error',
+};
+
 const eslintReactRules = {
-  '@eslint-react/component-hook-factories': 'error',
   '@eslint-react/dom-no-dangerously-set-innerhtml': 'error',
   '@eslint-react/dom-no-dangerously-set-innerhtml-with-children': 'error',
   '@eslint-react/dom-no-find-dom-node': 'error',
@@ -377,12 +461,6 @@ const eslintReactRules = {
   '@eslint-react/dom-no-unsafe-target-blank': 'error',
   '@eslint-react/dom-no-use-form-state': 'error',
   '@eslint-react/dom-no-void-elements-with-children': 'error',
-  '@eslint-react/dom-prefer-namespace-import': 'error',
-  '@eslint-react/error-boundaries': 'error',
-  '@eslint-react/exhaustive-deps': ['error', {
-    additionalHooks: 'useCleanupCallback',
-  }],
-  '@eslint-react/immutability': 'off',
   '@eslint-react/jsx-no-children-prop': 'error',
   '@eslint-react/jsx-no-children-prop-with-children': 'error',
   '@eslint-react/jsx-no-comment-textnodes': 'error',
@@ -421,12 +499,9 @@ const eslintReactRules = {
   '@eslint-react/no-misused-capture-owner-stack': 'error',
   '@eslint-react/no-nested-component-definitions': 'error',
   '@eslint-react/no-nested-lazy-component-declarations': 'error',
-  '@eslint-react/no-redundant-should-component-update': 'error',
   '@eslint-react/no-set-state-in-component-did-mount': 'error',
   '@eslint-react/no-set-state-in-component-did-update': 'error',
   '@eslint-react/no-set-state-in-component-will-update': 'error',
-  '@eslint-react/no-unnecessary-use-callback': 'off',
-  '@eslint-react/no-unnecessary-use-memo': 'off',
   '@eslint-react/no-unnecessary-use-prefix': 'error',
   '@eslint-react/no-unsafe-component-will-mount': 'error',
   '@eslint-react/no-unsafe-component-will-receive-props': 'error',
@@ -435,18 +510,9 @@ const eslintReactRules = {
   '@eslint-react/no-unstable-default-props': 'error',
   '@eslint-react/no-unused-class-component-members': 'error',
   '@eslint-react/no-unused-props': 'off',
-  '@eslint-react/no-unused-state': 'error',
+  '@eslint-react/no-unused-state': 'off',
   '@eslint-react/no-use-context': 'error',
-  '@eslint-react/prefer-destructuring-assignment': 'off',
-  '@eslint-react/prefer-namespace-import': 'error',
-  '@eslint-react/purity': 'error',
-  '@eslint-react/refs': 'error',
   '@eslint-react/rsc-function-definition': 'error',
-  '@eslint-react/rules-of-hooks': 'error',
-  '@eslint-react/set-state-in-effect': 'off',
-  '@eslint-react/set-state-in-render': 'error',
-  '@eslint-react/unsupported-syntax': 'error',
-  '@eslint-react/use-memo': 'error',
   '@eslint-react/use-state': 'error',
   '@eslint-react/web-api-no-leaked-event-listener': 'error',
   '@eslint-react/web-api-no-leaked-interval': 'error',
@@ -463,10 +529,11 @@ const tsxRules = {
 
 const tsRules = {
   ...jsRules,
-  ...pluginImport.configs.typescript.rules,
   ...pluginTS.configs['eslint-recommended'].rules,
   ...pluginTS.configs['recommended'].rules,
   ...pluginTS.configs['recommended-requiring-type-checking'].rules,
+  ...importXRules,
+  ...reactHooksRules,
   ...eslintReactRules,
 
   '@typescript-eslint/no-misused-promises': 'off',
@@ -694,14 +761,14 @@ const configArray = [
       reportUnusedDisableDirectives: 'error',
     },
     settings: {
-      ...pluginImport.configs.typescript.settings,
       vitest: {
         typecheck: true,
       },
-      'import/parsers': {
+      'import-x/extensions': ['.js', '.jsx', '.ts', '.tsx'],
+      'import-x/parsers': {
         '@typescript-eslint/parser': ['.ts', '.tsx'],
       },
-      'import/resolver': {
+      'import-x/resolver': {
         typescript: true,
         node: true,
       },
@@ -781,6 +848,7 @@ const configArray = [
     },
     rules: {
       ...jsRules,
+      ...importXRules,
     },
   },
 ];
