@@ -120,9 +120,6 @@ importers:
       '@gen-epix/tools-lib':
         specifier: 'workspace:'
         version: link:../tools-lib
-      '@openapitools/openapi-generator-cli':
-        specifier: 'catalog:'
-        version: 2.32.0(encoding@0.1.13)
       formdata-polyfill:
         specifier: 4.0.10
         version: 4.0.10
@@ -136,6 +133,9 @@ importers:
       '@gen-epix/eslint-config':
         specifier: 'workspace:'
         version: link:../eslint-config
+      '@openapitools/openapi-generator-cli':
+        specifier: 'catalog:'
+        version: 2.32.0(encoding@0.1.13)
       '@types/node':
         specifier: 'catalog:'
         version: 25.7.0
