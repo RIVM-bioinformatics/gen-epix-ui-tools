@@ -1,6 +1,6 @@
 {
   "name": "@gen-epix/generate-demo-upload-data",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "license": "EUPL-1.2",
   "publishConfig": {
     "access": "public"
@@ -28,7 +28,7 @@
   },
   "dependencies": {
     "@gen-epix/tools-lib": "workspace:",
-    "read-excel-file": "8.0.3"
+    "read-excel-file": "9.0.9"
   },
   "devDependencies": {
     "@gen-epix/eslint-config": "workspace:",
