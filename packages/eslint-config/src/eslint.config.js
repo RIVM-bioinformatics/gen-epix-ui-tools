@@ -4,7 +4,8 @@ import eslintReact from '@eslint-react/eslint-plugin';
 import eslintReactKit from '@eslint-react/kit';
 import * as parserTS from '@typescript-eslint/parser';
 import pluginTS from '@typescript-eslint/eslint-plugin';
-import pluginImportX from 'eslint-plugin-import-x';
+import pluginImportX, { createNodeResolver } from 'eslint-plugin-import-x';
+import { createTypeScriptImportResolver } from 'eslint-import-resolver-typescript';
 import pluginImportNewlines from 'eslint-plugin-import-newlines';
 import pluginPerfectionist from 'eslint-plugin-perfectionist';
 import pluginPreferArrow from 'eslint-plugin-prefer-arrow';
@@ -768,10 +769,12 @@ const configArray = [
       'import-x/parsers': {
         '@typescript-eslint/parser': ['.ts', '.tsx'],
       },
-      'import-x/resolver': {
-        typescript: true,
-        node: true,
-      },
+      'import-x/resolver-next': [
+        createTypeScriptImportResolver(),
+        createNodeResolver({
+          extensions: ['.mjs', '.cjs', '.js', '.jsx', '.ts', '.tsx', '.json', '.node'],
+        }),
+      ],
     },
   },
   {
