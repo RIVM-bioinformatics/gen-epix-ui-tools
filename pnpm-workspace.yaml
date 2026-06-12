@@ -8,11 +8,11 @@ allowBuilds:
   unrs-resolver: true
 
 catalog:
-  "@openapitools/openapi-generator-cli": "2.32.0"
-  "@types/node": "25.7.0"
-  "eslint": "10.3.0"
+  "@openapitools/openapi-generator-cli": "2.38.0"
+  "@types/node": "25.9.3"
+  "eslint": "10.4.1"
   "rimraf": "6.1.3"
-  "rollup": "4.60.3"
+  "rollup": "4.61.1"
   "rollup-plugin-dts": "6.4.1"
   "rollup-plugin-esbuild": "6.2.1"
   "typescript": "6.0.3"
