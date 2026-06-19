@@ -1,6 +1,6 @@
 {
   "name": "@gen-epix/oidc-mock-server",
-  "version": "0.1.2",
+  "version": "0.3.0",
   "license": "EUPL-1.2",
   "publishConfig": {
     "access": "public"
@@ -28,12 +28,11 @@
   "dependencies": {
     "@gen-epix/tools-lib": "workspace:",
     "basic-auth": "2.0.1",
-    "oauth2-mock-server": "8.2.3"
+    "oauth2-mock-server": "9.0.0"
   },
   "devDependencies": {
     "@gen-epix/eslint-config": "workspace:",
     "@types/basic-auth": "1.1.8",
-    "@types/express": "5.0.6",
     "@types/node": "catalog:",
     "eslint": "catalog:",
     "nodemon": "3.1.14",

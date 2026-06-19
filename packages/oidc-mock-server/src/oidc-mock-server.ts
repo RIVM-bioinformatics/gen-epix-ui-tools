@@ -9,11 +9,7 @@ import {
 import { OAuth2Server } from 'oauth2-mock-server';
 import basicAuth from 'basic-auth';
 import { findGitRootPath } from '@gen-epix/tools-lib';
-import type express from 'express';
-import {
-  json,
-  urlencoded,
-} from 'express';
+
 
 type Config = {
   port: number;
@@ -154,74 +150,78 @@ const start = async () => {
       scope: 'openid profile email offline_access',
     };
   });
-  const requestHandler = (server.service as unknown as { requestHandler: express.Express }).requestHandler;
+  server.service.addRoute('POST', '/set-user', (req, res) => {
+    const jsonResponse = (statusCode: number, body: unknown) => {
+      res.writeHead(statusCode, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify(body));
+    };
 
-  // Middleware for parsing JSON and URL-encoded data
-  requestHandler.use(json());
-  requestHandler.use(urlencoded({ extended: true }));
-
-  requestHandler.post('/set-user', (req, res) => {
     try {
       const updatedUser = req.body as Partial<User>;
 
       // Validate that at least one field is provided
       if (!updatedUser || Object.keys(updatedUser).length === 0) {
-        return res.status(400).json({
+        jsonResponse(400, {
           error: 'Bad Request',
           message: 'Request body must contain at least one user field to update',
         });
+        return;
       }
 
       // Validate field types and update user object
       if (updatedUser.email !== undefined) {
         if (typeof updatedUser.email !== 'string' || !updatedUser.email.trim()) {
-          return res.status(400).json({
+          jsonResponse(400, {
             error: 'Bad Request',
             message: 'Email must be a non-empty string',
           });
+          return;
         }
         user.email = updatedUser.email.trim();
       }
 
       if (updatedUser.sub !== undefined) {
         if (typeof updatedUser.sub !== 'string' || !updatedUser.sub.trim()) {
-          return res.status(400).json({
+          jsonResponse(400, {
             error: 'Bad Request',
             message: 'Sub must be a non-empty string',
           });
+          return;
         }
         user.sub = updatedUser.sub.trim();
       }
 
       if (updatedUser.first_name !== undefined) {
         if (typeof updatedUser.first_name !== 'string' || !updatedUser.first_name.trim()) {
-          return res.status(400).json({
+          jsonResponse(400, {
             error: 'Bad Request',
             message: 'First name must be a non-empty string',
           });
+          return;
         }
         user.first_name = updatedUser.first_name.trim();
       }
 
       if (updatedUser.last_name !== undefined) {
         if (typeof updatedUser.last_name !== 'string' || !updatedUser.last_name.trim()) {
-          return res.status(400).json({
+          jsonResponse(400, {
             error: 'Bad Request',
             message: 'Last name must be a non-empty string',
           });
+          return;
         }
         user.last_name = updatedUser.last_name.trim();
       }
 
       console.log('User updated:', user);
 
-      res.status(200).json({
+      jsonResponse(200, {
         message: 'User updated successfully',
         user: { ...user },
       });
     } catch (error) {
       console.error('Error updating user:', error);
-      res.status(500).json({
+      jsonResponse(500, {
         error: 'Internal Server Error',
         message: 'Failed to update user',
       });
