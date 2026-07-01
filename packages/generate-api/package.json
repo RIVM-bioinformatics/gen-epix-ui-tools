@@ -37,7 +37,7 @@
   },
   "devDependencies": {
     "@gen-epix/eslint-config": "workspace:",
-    "@openapitools/openapi-generator-cli": "catalog:",
+    "@openapitools/openapi-generator-cli": "2.39.1",
     "@types/node": "catalog:",
     "eslint": "catalog:",
     "rimraf": "catalog:",

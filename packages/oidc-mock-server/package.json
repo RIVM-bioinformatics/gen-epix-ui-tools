@@ -28,7 +28,7 @@
   "dependencies": {
     "@gen-epix/tools-lib": "workspace:",
     "basic-auth": "2.0.1",
-    "oauth2-mock-server": "9.0.0"
+    "oauth2-mock-server": "9.1.0"
   },
   "devDependencies": {
     "@gen-epix/eslint-config": "workspace:",
