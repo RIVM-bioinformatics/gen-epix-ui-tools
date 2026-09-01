@@ -307,7 +307,7 @@ const jsRules = {
   'perfectionist/sort-export-attributes': ['error'],
   'perfectionist/sort-heritage-clauses': ['error'],
   'perfectionist/sort-array-includes': ['error'],
-  'perfectionist/sort-arrays': ['error'],
+  'perfectionist/sort-arrays': ['off'],
   'perfectionist/sort-named-imports': ['error'],
   'perfectionist/sort-named-exports': ['error'],
   'perfectionist/sort-object-types': ['error'],

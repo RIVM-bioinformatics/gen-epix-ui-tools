@@ -1,6 +1,6 @@
 {
   "name": "@gen-epix/translation-util",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "license": "EUPL-1.2",
   "publishConfig": {
     "access": "public"
@@ -28,7 +28,7 @@
   },
   "dependencies": {
     "@gen-epix/tools-lib": "workspace:",
-    "chalk": "5.6.2",
+    "chalk": "6.0.0",
     "glob": "13.0.6",
     "typescript": "catalog:"
   },
