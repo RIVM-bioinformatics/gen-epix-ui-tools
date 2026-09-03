@@ -7,7 +7,7 @@ import {
 } from 'fs';
 
 import { OAuth2Server } from 'oauth2-mock-server';
-import basicAuth from 'basic-auth';
+import { parse } from 'basic-auth';
 import { findGitRootPath } from '@gen-epix/tools-lib';
 
 
@@ -124,7 +124,9 @@ const start = async () => {
 
   server.service.on('beforeTokenSigning', (token: Token, req: Request) => {
     console.log('Before token signing');
-    const credentials = basicAuth(req);
+    const credentials = req.headers?.authorization
+      ? parse(req.headers.authorization)
+      : undefined;
     const clientId = credentials ? credentials.name : req.body.client_id;
 
     token.payload.aud = clientId;
