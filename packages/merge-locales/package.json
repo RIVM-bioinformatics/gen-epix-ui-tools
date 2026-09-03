@@ -1,49 +1,49 @@
 {
-	"name": "@gen-epix/merge-locales",
-	"version": "0.0.1",
-	"license": "EUPL-1.2",
-	"publishConfig": {
-		"access": "public"
-	},
-	"repository": {
-		"type": "git",
-		"url": "https://github.com/RIVM-bioinformatics/gen-epix-ui-tools.git",
-		"directory": "packages/merge-locales"
-	},
-	"author": "RIVM-bioinformatics <ids-bioinformatics@rivm.nl>",
-	"homepage": "https://github.com/RIVM-bioinformatics/gen-epix",
-	"type": "module",
-	"files": [
-		"bin"
-	],
-	"main": "bin/index.js",
-	"types": "bin/index.d.ts",
-	"exports": {
-		".": {
-			"types": "./bin/index.d.ts",
-			"import": "./bin/index.js"
-		},
-		"./cli": "./bin/merge-locales.js"
-	},
-	"scripts": {
-		"lint": "eslint ./src --report-unused-disable-directives --max-warnings 0",
-		"check-types": "tsc --noemit",
-		"merge-locales": "vite-node --loader ts-node/esm ./src/merge-locales.ts",
-		"build": "rimraf ./bin && rollup -c && chmod +x ./bin/merge-locales.js"
-	},
-	"bin": {
-		"merge-locales": "bin/merge-locales.js"
-	},
-	"dependencies": {},
-	"devDependencies": {
-		"@gen-epix/eslint-config": "workspace:",
-		"@types/node": "catalog:",
-		"eslint": "catalog:",
-		"rimraf": "catalog:",
-		"rollup": "catalog:",
-		"rollup-plugin-dts": "catalog:",
-		"rollup-plugin-esbuild": "catalog:",
-		"typescript": "catalog:",
-		"vite-node": "catalog:"
-	}
+  "name": "@gen-epix/merge-locales",
+  "version": "0.0.2",
+  "license": "EUPL-1.2",
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/RIVM-bioinformatics/gen-epix-ui-tools.git",
+    "directory": "packages/merge-locales"
+  },
+  "author": "RIVM-bioinformatics <ids-bioinformatics@rivm.nl>",
+  "homepage": "https://github.com/RIVM-bioinformatics/gen-epix",
+  "type": "module",
+  "files": [
+    "bin"
+  ],
+  "main": "bin/index.js",
+  "types": "bin/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./bin/index.d.ts",
+      "import": "./bin/index.js"
+    },
+    "./cli": "./bin/merge-locales.js"
+  },
+  "scripts": {
+    "lint": "eslint ./src --report-unused-disable-directives --max-warnings 0",
+    "check-types": "tsc --noemit",
+    "merge-locales": "vite-node --loader ts-node/esm ./src/merge-locales.ts",
+    "build": "rimraf ./bin && rollup -c && chmod +x ./bin/merge-locales.js"
+  },
+  "bin": {
+    "merge-locales": "bin/merge-locales.js"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "@gen-epix/eslint-config": "workspace:",
+    "@types/node": "catalog:",
+    "eslint": "catalog:",
+    "rimraf": "catalog:",
+    "rollup": "catalog:",
+    "rollup-plugin-dts": "catalog:",
+    "rollup-plugin-esbuild": "catalog:",
+    "typescript": "catalog:",
+    "vite-node": "catalog:"
+  }
 }

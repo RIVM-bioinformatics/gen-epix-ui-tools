@@ -35,4 +35,4 @@ export default {
 };
 ```
 
-Paths are resolved relative to Vite's configured root. Later source directories take precedence.
+Paths are resolved relative to Vite's configured root. Locale files are merged when the dev server starts and whenever a source locale changes, with a full page reload. Production builds merge the files during the build lifecycle. Later source directories take precedence.
