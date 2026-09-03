@@ -1,8 +1,6 @@
 import {
-  mkdirSync,
   readdirSync,
   readFileSync,
-  writeFileSync,
 } from 'fs';
 import {
   basename,
@@ -11,7 +9,7 @@ import {
 } from 'path';
 
 export interface MergeLocalesOptions {
-  outputDirectory: string;
+  outputPath: string;
   sourceDirectories: string[];
 }
 
@@ -55,10 +53,6 @@ const readLocaleFiles = (sourceDirectory: string): Map<string, string[]> => {
   return localeFiles;
 };
 
-export const getLocaleFilePaths = (sourceDirectories: string[]): string[] => (
-  sourceDirectories.flatMap(sourceDirectory => [...readLocaleFiles(sourceDirectory).values()].flat())
-);
-
 const readJsonFile = (filePath: string): JsonValue => {
   try {
     return JSON.parse(readFileSync(filePath, 'utf-8')) as JsonValue;
@@ -67,7 +61,8 @@ const readJsonFile = (filePath: string): JsonValue => {
   }
 };
 
-export const mergeLocales = ({ outputDirectory, sourceDirectories }: MergeLocalesOptions): string[] => {
+/** Merges the locale JSON files of all source directories in memory, keyed by locale name. */
+export const mergeLocales = (sourceDirectories: string[]): Map<string, string> => {
   const locales = new Map<string, string[]>();
 
   for (const sourceDirectory of sourceDirectories) {
@@ -87,8 +82,7 @@ export const mergeLocales = ({ outputDirectory, sourceDirectories }: MergeLocale
     throw new Error('No locale JSON files found in the source directories.');
   }
 
-  mkdirSync(outputDirectory, { recursive: true });
-  const outputPaths: string[] = [];
+  const mergedLocales = new Map<string, string>();
 
   for (const [locale, files] of [...locales.entries()].sort(([first], [second]) => first.localeCompare(second))) {
     let merged: JsonValue = {};
@@ -96,10 +90,8 @@ export const mergeLocales = ({ outputDirectory, sourceDirectories }: MergeLocale
       merged = mergeJsonValues(merged, readJsonFile(file));
     }
 
-    const outputPath = join(outputDirectory, `${locale}.json`);
-    writeFileSync(outputPath, `${JSON.stringify(merged, null, 2)}\n`);
-    outputPaths.push(outputPath);
+    mergedLocales.set(locale, `${JSON.stringify(merged, null, 2)}\n`);
   }
 
-  return outputPaths;
+  return mergedLocales;
 };

@@ -8,7 +8,7 @@ const bundle = input => ({
   external: id => !/^[./]/.test(id),
   plugins: [esbuild()],
   output: {
-    file: `bin/${input.includes('index') ? 'index' : 'merge-locales'}.js`,
+    file: 'bin/index.js',
     format: 'es',
     sourcemap: false,
   },
@@ -16,7 +16,6 @@ const bundle = input => ({
 
 module.exports = [
   bundle('src/index.ts'),
-  bundle('src/merge-locales.ts'),
   {
     input: 'src/index.ts',
     plugins: [dts()],
