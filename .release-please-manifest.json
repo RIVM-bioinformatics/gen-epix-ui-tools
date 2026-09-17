@@ -1,10 +1,10 @@
 {
-  "packages/eslint-config": "0.6.0",
-  "packages/generate-api": "0.7.0",
-  "packages/generate-common-api": "0.1.0",
-  "packages/generate-license-manifest": "0.3.0",
-  "packages/merge-locales": "0.1.0",
-  "packages/oidc-mock-server": "0.5.0",
-  "packages/tools-lib": "0.2.0",
-  "packages/translation-util": "0.3.0"
+  "packages/eslint-config": "0.6.1",
+  "packages/generate-api": "0.7.1",
+  "packages/generate-common-api": "0.1.1",
+  "packages/generate-license-manifest": "0.3.1",
+  "packages/merge-locales": "0.1.1",
+  "packages/oidc-mock-server": "0.5.1",
+  "packages/tools-lib": "0.2.1",
+  "packages/translation-util": "0.3.1"
 }
