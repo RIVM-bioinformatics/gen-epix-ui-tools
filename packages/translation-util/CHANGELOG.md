@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.2](https://github.com/RIVM-bioinformatics/gen-epix-ui-tools/compare/translation-util-v0.3.1...translation-util-v0.3.2) (2026-09-17)
+
+
+### Bug Fixes
+
+* fix build again ([6187065](https://github.com/RIVM-bioinformatics/gen-epix-ui-tools/commit/61870650afb7e36c84b71df03cda66a36a3605c1))
+
 ## [0.3.1](https://github.com/RIVM-bioinformatics/gen-epix-ui-tools/compare/translation-util-v0.3.0...translation-util-v0.3.1) (2026-09-17)
 
 
