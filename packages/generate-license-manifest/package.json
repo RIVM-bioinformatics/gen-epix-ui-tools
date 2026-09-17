@@ -1,6 +1,6 @@
 {
   "name": "@gen-epix/generate-license-manifest",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "license": "EUPL-1.2",
   "publishConfig": {
     "access": "public"
@@ -28,10 +28,10 @@
     "generate-license-manifest": "bin/generate-license-manifest.js"
   },
   "dependencies": {
-    "@gen-epix/tools-lib": "workspace:"
+    "@gen-epix/tools-lib": "workspace:^"
   },
   "devDependencies": {
-    "@gen-epix/eslint-config": "workspace:",
+    "@gen-epix/eslint-config": "workspace:^",
     "@types/node": "22.20.3",
     "eslint": "10.10.0",
     "rimraf": "6.1.3",

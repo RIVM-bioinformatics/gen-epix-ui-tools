@@ -1,6 +1,6 @@
 {
   "name": "@gen-epix/tools-lib",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "license": "EUPL-1.2",
   "publishConfig": {
     "access": "public"
@@ -27,7 +27,7 @@
     "findup-sync": "5.0.0"
   },
   "devDependencies": {
-    "@gen-epix/eslint-config": "workspace:",
+    "@gen-epix/eslint-config": "workspace:^",
     "@types/findup-sync": "4.0.5",
     "@types/node": "22.20.3",
     "eslint": "10.10.0",

@@ -249,7 +249,7 @@ importers:
   packages/generate-api:
     dependencies:
       '@gen-epix/tools-lib':
-        specifier: 'workspace:'
+        specifier: workspace:^
         version: link:../tools-lib
       formdata-polyfill:
         specifier: 4.0.10
@@ -262,7 +262,7 @@ importers:
         version: 12.1.3
     devDependencies:
       '@gen-epix/eslint-config':
-        specifier: 'workspace:'
+        specifier: workspace:^
         version: link:../eslint-config
       '@openapitools/openapi-generator-cli':
         specifier: 2.41.0
@@ -292,7 +292,7 @@ importers:
   packages/generate-common-api:
     devDependencies:
       '@gen-epix/eslint-config':
-        specifier: 'workspace:'
+        specifier: workspace:^
         version: link:../eslint-config
       '@types/node':
         specifier: 22.20.3
@@ -319,11 +319,11 @@ importers:
   packages/generate-license-manifest:
     dependencies:
       '@gen-epix/tools-lib':
-        specifier: 'workspace:'
+        specifier: workspace:^
         version: link:../tools-lib
     devDependencies:
       '@gen-epix/eslint-config':
-        specifier: 'workspace:'
+        specifier: workspace:^
         version: link:../eslint-config
       '@types/node':
         specifier: 22.20.3
@@ -350,7 +350,7 @@ importers:
   packages/merge-locales:
     devDependencies:
       '@gen-epix/eslint-config':
-        specifier: 'workspace:'
+        specifier: workspace:^
         version: link:../eslint-config
       '@types/node':
         specifier: 22.20.3
@@ -377,7 +377,7 @@ importers:
   packages/oidc-mock-server:
     dependencies:
       '@gen-epix/tools-lib':
-        specifier: 'workspace:'
+        specifier: workspace:^
         version: link:../tools-lib
       basic-auth:
         specifier: 3.0.0
@@ -387,7 +387,7 @@ importers:
         version: 9.2.0
     devDependencies:
       '@gen-epix/eslint-config':
-        specifier: 'workspace:'
+        specifier: workspace:^
         version: link:../eslint-config
       '@types/basic-auth':
         specifier: 1.1.8
@@ -421,7 +421,7 @@ importers:
         version: 5.0.0
     devDependencies:
       '@gen-epix/eslint-config':
-        specifier: 'workspace:'
+        specifier: workspace:^
         version: link:../eslint-config
       '@types/findup-sync':
         specifier: 4.0.5
@@ -451,7 +451,7 @@ importers:
   packages/translation-util:
     dependencies:
       '@gen-epix/tools-lib':
-        specifier: 'workspace:'
+        specifier: workspace:^
         version: link:../tools-lib
       chalk:
         specifier: 6.0.0
@@ -464,7 +464,7 @@ importers:
         version: 6.0.3
     devDependencies:
       '@gen-epix/eslint-config':
-        specifier: 'workspace:'
+        specifier: workspace:^
         version: link:../eslint-config
       '@types/node':
         specifier: 22.20.3
