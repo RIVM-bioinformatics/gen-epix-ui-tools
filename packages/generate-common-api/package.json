@@ -28,7 +28,7 @@
   },
   "dependencies": {},
   "devDependencies": {
-    "@gen-epix/eslint-config": "workspace:",
+    "@gen-epix/eslint-config": "workspace:^",
     "@types/node": "22.20.3",
     "eslint": "10.10.0",
     "rimraf": "6.1.3",

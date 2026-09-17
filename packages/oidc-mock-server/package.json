@@ -26,12 +26,12 @@
     "oidc-mock-server": "bin/oidc-mock-server.js"
   },
   "dependencies": {
-    "@gen-epix/tools-lib": "workspace:",
+    "@gen-epix/tools-lib": "workspace:^",
     "basic-auth": "3.0.0",
     "oauth2-mock-server": "9.2.0"
   },
   "devDependencies": {
-    "@gen-epix/eslint-config": "workspace:",
+    "@gen-epix/eslint-config": "workspace:^",
     "@types/basic-auth": "1.1.8",
     "@types/node": "22.20.3",
     "eslint": "10.10.0",
