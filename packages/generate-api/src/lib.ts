@@ -221,7 +221,7 @@ export const sanitizeBaseTs = (baseTsPath: string, appType: APP): void => {
 `));
 };
 
-export const sanitizeApiTs = (apiTsPath: string, appType: APP, reservedWords: string[], reservedWordPrefix: string): void => {
+export const sanitizeApiTs = (apiTsPath: string, appType: APP): void => {
   const apiPrefix = appTypeToApiPrefix(appType);
 
   sanitizeTs(apiTsPath, content => {
@@ -256,11 +256,6 @@ export const sanitizeApiTs = (apiTsPath: string, appType: APP, reservedWords: st
   }
 `).replace(/this\.basePath/g, 'this.configuration.baseUrl')
       .replace(/BaseAPI/g, `${apiPrefix}BaseAPI`);
-
-    reservedWords.forEach(word => {
-      const regex = new RegExp(`\\b${word}\\b`, 'g');
-      newContent = newContent.replace(regex, `${reservedWordPrefix}${String(word).charAt(0).toUpperCase() + String(word).slice(1)}`);
-    });
 
     // get all matches of:
     // "export type (\w)" and "export interface (\w)" and prefix all occurrences of the captured word with the api prefix, do this once per captured word

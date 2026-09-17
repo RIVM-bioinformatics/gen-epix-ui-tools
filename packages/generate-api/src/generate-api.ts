@@ -105,7 +105,7 @@ fetchOpenApiJson(url).catch((error: unknown) => {
   sanitizeCommonTs(join(generatedApiTargetDir, 'common.ts'), appType);
   sanitizeConfigurationTs(join(generatedApiTargetDir, 'configuration.ts'));
   sanitizeBaseTs(join(generatedApiTargetDir, 'base.ts'), appType);
-  sanitizeApiTs(join(generatedApiTargetDir, 'api.ts'), appType, ['Subject', 'Filter'], 'Epi');
+  sanitizeApiTs(join(generatedApiTargetDir, 'api.ts'), appType);
 
   // STEP 5: copy the generated files to the target directory
   console.log('Ensuring target directory exists:', targetDir);
