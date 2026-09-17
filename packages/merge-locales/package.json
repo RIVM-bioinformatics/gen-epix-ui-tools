@@ -1,6 +1,6 @@
 {
   "name": "@gen-epix/merge-locales",
-  "version": "0.0.3",
+  "version": "0.1.0",
   "license": "EUPL-1.2",
   "publishConfig": {
     "access": "public"
