@@ -1,0 +1,41 @@
+{
+	"$schema": "https://raw.githubusercontent.com/googleapis/release-please/main/schemas/config.json",
+	"release-type": "node",
+	"pull-request-title-pattern": "build${scope}: release ${component} ${version}",
+	"bootstrap-sha": "54a240d",
+	"include-component-in-tag": true,
+	"packages": {
+		"packages/eslint-config": {
+			"package-name": "@gen-epix/eslint-config",
+			"component": "eslint-config"
+		},
+		"packages/generate-api": {
+			"package-name": "@gen-epix/generate-api",
+			"component": "generate-api"
+		},
+		"packages/generate-common-api": {
+			"package-name": "@gen-epix/generate-common-api",
+			"component": "generate-common-api"
+		},
+		"packages/generate-license-manifest": {
+			"package-name": "@gen-epix/generate-license-manifest",
+			"component": "generate-license-manifest"
+		},
+		"packages/merge-locales": {
+			"package-name": "@gen-epix/merge-locales",
+			"component": "merge-locales"
+		},
+		"packages/oidc-mock-server": {
+			"package-name": "@gen-epix/oidc-mock-server",
+			"component": "oidc-mock-server"
+		},
+		"packages/tools-lib": {
+			"package-name": "@gen-epix/tools-lib",
+			"component": "tools-lib"
+		},
+		"packages/translation-util": {
+			"package-name": "@gen-epix/translation-util",
+			"component": "translation-util"
+		}
+	}
+}

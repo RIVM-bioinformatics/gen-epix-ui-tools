@@ -1,0 +1,148 @@
+name: release-please
+on:
+    push:
+        branches:
+            - main
+
+permissions:
+    contents: write
+    pull-requests: write
+    issues: write
+    id-token: write
+
+jobs:
+    release-please:
+        runs-on: ubuntu-latest
+        outputs:
+            releases-created: ${{ steps.release.outputs.releases_created }}
+            eslint-config-release-created: ${{ steps.release.outputs['packages/eslint-config--release_created'] }}
+            eslint-config-tag-name: ${{ steps.release.outputs['packages/eslint-config--tag_name'] }}
+            generate-api-release-created: ${{ steps.release.outputs['packages/generate-api--release_created'] }}
+            generate-api-tag-name: ${{ steps.release.outputs['packages/generate-api--tag_name'] }}
+            generate-common-api-release-created: ${{ steps.release.outputs['packages/generate-common-api--release_created'] }}
+            generate-common-api-tag-name: ${{ steps.release.outputs['packages/generate-common-api--tag_name'] }}
+            generate-license-manifest-release-created: ${{ steps.release.outputs['packages/generate-license-manifest--release_created'] }}
+            generate-license-manifest-tag-name: ${{ steps.release.outputs['packages/generate-license-manifest--tag_name'] }}
+            merge-locales-release-created: ${{ steps.release.outputs['packages/merge-locales--release_created'] }}
+            merge-locales-tag-name: ${{ steps.release.outputs['packages/merge-locales--tag_name'] }}
+            oidc-mock-server-release-created: ${{ steps.release.outputs['packages/oidc-mock-server--release_created'] }}
+            oidc-mock-server-tag-name: ${{ steps.release.outputs['packages/oidc-mock-server--tag_name'] }}
+            tools-lib-release-created: ${{ steps.release.outputs['packages/tools-lib--release_created'] }}
+            tools-lib-tag-name: ${{ steps.release.outputs['packages/tools-lib--tag_name'] }}
+            translation-util-release-created: ${{ steps.release.outputs['packages/translation-util--release_created'] }}
+            translation-util-tag-name: ${{ steps.release.outputs['packages/translation-util--tag_name'] }}
+        steps:
+            - uses: googleapis/release-please-action@v5.0.0
+              id: release
+              with:
+                  token: ${{ secrets.GITHUB_TOKEN }}
+                  config-file: release-please-config.json
+                  manifest-file: .release-please-manifest.json
+
+    merge-main-into-development:
+        needs: release-please
+        if: ${{ needs.release-please.outputs.releases-created == 'true' }}
+        runs-on: ubuntu-latest
+        permissions:
+            contents: write
+        steps:
+            - uses: actions/checkout@v5
+              with:
+                  ref: development
+                  fetch-depth: 0
+
+            - name: Merge main into development
+              run: |
+                  git config user.name "github-actions[bot]"
+                  git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+                  git fetch origin main
+                  git merge --no-ff origin/main -m "chore: merge main into development [skip ci]"
+                  git push origin development
+
+    publish:
+        needs: release-please
+        if: ${{ needs.release-please.outputs.releases-created == 'true' }}
+        strategy:
+            matrix:
+                include:
+                    - package: eslint-config
+                      path: packages/eslint-config
+                      release-created: eslint-config-release-created
+                      tag-name: eslint-config-tag-name
+                      artifact-directory: src
+                      build: false
+                    - package: generate-api
+                      path: packages/generate-api
+                      release-created: generate-api-release-created
+                      tag-name: generate-api-tag-name
+                      artifact-directory: bin
+                      build: true
+                    - package: generate-common-api
+                      path: packages/generate-common-api
+                      release-created: generate-common-api-release-created
+                      tag-name: generate-common-api-tag-name
+                      artifact-directory: bin
+                      build: true
+                    - package: generate-license-manifest
+                      path: packages/generate-license-manifest
+                      release-created: generate-license-manifest-release-created
+                      tag-name: generate-license-manifest-tag-name
+                      artifact-directory: bin
+                      build: true
+                    - package: merge-locales
+                      path: packages/merge-locales
+                      release-created: merge-locales-release-created
+                      tag-name: merge-locales-tag-name
+                      artifact-directory: bin
+                      build: true
+                    - package: oidc-mock-server
+                      path: packages/oidc-mock-server
+                      release-created: oidc-mock-server-release-created
+                      tag-name: oidc-mock-server-tag-name
+                      artifact-directory: bin
+                      build: true
+                    - package: tools-lib
+                      path: packages/tools-lib
+                      release-created: tools-lib-release-created
+                      tag-name: tools-lib-tag-name
+                      artifact-directory: dist
+                      build: true
+                    - package: translation-util
+                      path: packages/translation-util
+                      release-created: translation-util-release-created
+                      tag-name: translation-util-tag-name
+                      artifact-directory: bin
+                      build: true
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v5
+
+            - uses: ./.github/actions/setup-node-env
+              with:
+                  node-version: 24
+
+            - name: Install dependencies
+              run: pnpm install --frozen-lockfile
+
+            - name: Create .npmrc
+              run: echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > .npmrc
+              env:
+                  NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+            - name: Build
+              if: ${{ matrix.build && needs.release-please.outputs[matrix.release-created] == 'true' }}
+              run: pnpm --filter @gen-epix/${{ matrix.package }} run build
+
+            - name: Zip package artifact
+              if: ${{ needs.release-please.outputs[matrix.release-created] == 'true' }}
+              run: cd ${{ matrix.path }} && zip -r ../../gen-epix-${{ matrix.package }}.zip ${{ matrix.artifact-directory }}
+
+            - name: Upload release artifact to GitHub
+              if: ${{ needs.release-please.outputs[matrix.release-created] == 'true' }}
+              env:
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+              run: gh release upload ${{ needs.release-please.outputs[matrix.tag-name] }} gen-epix-${{ matrix.package }}.zip --clobber
+
+            - name: Publish to NPM
+              if: ${{ needs.release-please.outputs[matrix.release-created] == 'true' }}
+              run: pnpm --filter @gen-epix/${{ matrix.package }} publish --access=public --no-git-checks
