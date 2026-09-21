@@ -135,7 +135,7 @@ export const sanitizeCommonTs = (commonTsPath: string, appType: APP): void => {
     .replace('import { RequiredError } from "./base";', `import { ${apiPrefix}BaseAPI, RequiredError } from "./base";`)
     .replace(`import type { AxiosInstance, AxiosResponse } from 'axios';`, `import type { AxiosInstance, AxiosResponse, AxiosRequestConfig } from 'axios';
 import { isAxiosError } from 'axios';`)
-    .replace(/export const createRequestFunction = function \([\s\S]*?\n};\n/, `export const createRequestFunction = function (axiosArgs: RequestArgs, globalAxios: AxiosInstance, _configuration?: Configuration): <T = unknown, R = AxiosResponse<T>>(axios?: AxiosInstance, _basePath?: string) => Promise<R> {
+    .replace(/export const createRequestFunction = function \([\s\S]*?\n};?\n/, `export const createRequestFunction = function (axiosArgs: RequestArgs, globalAxios: AxiosInstance, _configuration?: Configuration): <T = unknown, R = AxiosResponse<T>>(axios?: AxiosInstance, _basePath?: string) => Promise<R> {
   return async <T = unknown, R = AxiosResponse<T>>(axios: AxiosInstance = globalAxios, _basePath: string) => {
 
     const axiosRequestArgs: AxiosRequestConfig = {
@@ -153,7 +153,8 @@ import { isAxiosError } from 'axios';`)
     if (isAxiosError(res)) {
       throw res;
     }
-    return res;
+    // axios@1.20+ keeps AxiosResponseResult<T, R, D, P> unresolved for a generic R, so it won't assign to Promise<R> without a cast.
+    return res as unknown as R;
   };
 };
 `));
