@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.0](https://github.com/RIVM-bioinformatics/gen-epix-ui-tools/compare/generate-common-api-v0.1.2...generate-common-api-v0.2.0) (2026-09-21)
+
+
+### Features
+
+* update dependencies ([90040d6](https://github.com/RIVM-bioinformatics/gen-epix-ui-tools/commit/90040d6fcbacc6553864ccf710ced00fda99e594))
+
 ## [0.1.2](https://github.com/RIVM-bioinformatics/gen-epix-ui-tools/compare/generate-common-api-v0.1.1...generate-common-api-v0.1.2) (2026-09-17)
 
 

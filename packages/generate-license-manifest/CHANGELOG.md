@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.0](https://github.com/RIVM-bioinformatics/gen-epix-ui-tools/compare/generate-license-manifest-v0.3.2...generate-license-manifest-v0.4.0) (2026-09-21)
+
+
+### Features
+
+* update dependencies ([90040d6](https://github.com/RIVM-bioinformatics/gen-epix-ui-tools/commit/90040d6fcbacc6553864ccf710ced00fda99e594))
+
 ## [0.3.2](https://github.com/RIVM-bioinformatics/gen-epix-ui-tools/compare/generate-license-manifest-v0.3.1...generate-license-manifest-v0.3.2) (2026-09-17)
 
 

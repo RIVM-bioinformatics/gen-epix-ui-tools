@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.6.0](https://github.com/RIVM-bioinformatics/gen-epix-ui-tools/compare/oidc-mock-server-v0.5.2...oidc-mock-server-v0.6.0) (2026-09-21)
+
+
+### Features
+
+* update dependencies ([90040d6](https://github.com/RIVM-bioinformatics/gen-epix-ui-tools/commit/90040d6fcbacc6553864ccf710ced00fda99e594))
+
 ## [0.5.2](https://github.com/RIVM-bioinformatics/gen-epix-ui-tools/compare/oidc-mock-server-v0.5.1...oidc-mock-server-v0.5.2) (2026-09-17)
 
 
