@@ -135,13 +135,7 @@ export const sanitizeCommonTs = (commonTsPath: string, appType: APP): void => {
     .replace('import { RequiredError } from "./base";', `import { ${apiPrefix}BaseAPI, RequiredError } from "./base";`)
     .replace(`import type { AxiosInstance, AxiosResponse } from 'axios';`, `import type { AxiosInstance, AxiosResponse, AxiosRequestConfig } from 'axios';
 import { isAxiosError } from 'axios';`)
-    .replace(`export const createRequestFunction = function (axiosArgs: RequestArgs, globalAxios: AxiosInstance, BASE_PATH: string, configuration?: Configuration): <T = unknown, R = AxiosResponse<T>>(axios?: AxiosInstance, _basePath?: string) => Promise<R> {
-    return <T = unknown, R = AxiosResponse<T>>(axios: AxiosInstance = globalAxios, basePath: string = BASE_PATH) => {
-        const axiosRequestArgs = {...axiosArgs.options, url: (axios.defaults.baseURL ? '' : configuration?.basePath ?? basePath) + axiosArgs.url};
-        return axios.request<T, R>(axiosRequestArgs);
-    };
-}
-`, `export const createRequestFunction = function (axiosArgs: RequestArgs, globalAxios: AxiosInstance, _configuration?: Configuration): <T = unknown, R = AxiosResponse<T>>(axios?: AxiosInstance, _basePath?: string) => Promise<R> {
+    .replace(/export const createRequestFunction = function \([\s\S]*?\n};\n/, `export const createRequestFunction = function (axiosArgs: RequestArgs, globalAxios: AxiosInstance, _configuration?: Configuration): <T = unknown, R = AxiosResponse<T>>(axios?: AxiosInstance, _basePath?: string) => Promise<R> {
   return async <T = unknown, R = AxiosResponse<T>>(axios: AxiosInstance = globalAxios, _basePath: string) => {
 
     const axiosRequestArgs: AxiosRequestConfig = {
@@ -161,7 +155,7 @@ import { isAxiosError } from 'axios';`)
     }
     return res;
   };
-}
+};
 `));
 };
 
