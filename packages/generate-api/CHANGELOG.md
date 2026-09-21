@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.7.4](https://github.com/RIVM-bioinformatics/gen-epix-ui-tools/compare/generate-api-v0.7.3...generate-api-v0.7.4) (2026-09-21)
+
+
+### Bug Fixes
+
+* fix api generation again ([de7f020](https://github.com/RIVM-bioinformatics/gen-epix-ui-tools/commit/de7f0207e0ff591659f1b01c0b051483031bfd87))
+
 ## [0.7.3](https://github.com/RIVM-bioinformatics/gen-epix-ui-tools/compare/generate-api-v0.7.2...generate-api-v0.7.3) (2026-09-21)
 
 
