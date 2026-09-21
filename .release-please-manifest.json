@@ -1,6 +1,6 @@
 {
   "packages/eslint-config": "0.6.1",
-  "packages/generate-api": "0.7.2",
+  "packages/generate-api": "0.7.3",
   "packages/generate-common-api": "0.1.2",
   "packages/generate-license-manifest": "0.3.2",
   "packages/merge-locales": "0.1.2",
