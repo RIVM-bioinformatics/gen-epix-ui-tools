@@ -222,7 +222,6 @@ export const sanitizeApiTs = (apiTsPath: string, appType: APP): void => {
   sanitizeTs(apiTsPath, content => {
     let newContent = content
       .replace('/* tslint:disable */\n/* eslint-disable */', '/* eslint-disable */')
-      // .replace(/, localVarOperationServerBasePath \|\| basePath/g, '')
       .replace(/export const (.*?)ApiAxiosParamCreator/g, `const ${apiPrefix}$1ApiAxiosParamCreator`)
       .replace(/const localVarAxiosParamCreator = (.*?)ApiAxiosParamCreator\(configuration\)/g, `const localVarAxiosParamCreator = ${apiPrefix}$1ApiAxiosParamCreator(configuration)`)
       .replace(/BASE_PATH, configuration/g, 'configuration')
@@ -236,21 +235,22 @@ export const sanitizeApiTs = (apiTsPath: string, appType: APP): void => {
       .replace(/export const (.*)ApiFactory[\s\S]*?object-oriented interface/g, `
 /**
  * ${apiPrefix}$1Api - object-oriented interface
-`).replace(/export class (.*)Api extends BaseAPI {/g, `export class ${apiPrefix}$1Api extends BaseAPI {
-  private static __instance: ${apiPrefix}$1Api;
-    
-  public static getInstance(): ${apiPrefix}$1Api {
-    const hotData = (import.meta as { hot?: { data: { [key: string]: unknown } } }).hot?.data || undefined;
-    const instance = ${apiPrefix}$1Api.__instance ?? (hotData?.['${apiPrefix}$1Api'] as ${apiPrefix}$1Api) ?? new ${apiPrefix}$1Api();
-    if (hotData && !hotData['${apiPrefix}$1Api']) {
-      hotData['${apiPrefix}$1Api'] = instance;
+`).replace(/export class (.*)Api extends BaseAPI {/g, `@singleton()
+export class ${apiPrefix}$1Api extends BaseAPI {
+`).replace(/this\.basePath/g, 'this.configuration.baseUrl');
+
+    if (!newContent.includes("import { singleton } from 'tsyringe';")) {
+      newContent = newContent.replace('import type { Configuration }', `import { singleton } from 'tsyringe';
+import type { Configuration }`);
     }
 
-    ${apiPrefix}$1Api.__instance = instance;
-    return instance;
-  }
-`).replace(/this\.basePath/g, 'this.configuration.baseUrl')
-      .replace(/BaseAPI/g, `${apiPrefix}BaseAPI`);
+    newContent = newContent.replace(new RegExp(`(?<!${apiPrefix})BaseAPI`, 'g'), `${apiPrefix}BaseAPI`);
+
+    const generatedApiSingletonRegex = new RegExp(
+      `export class (${apiPrefix}\\w+Api) extends (${apiPrefix}BaseAPI) \\{\\n  private static __instance: \\1;\\n    \\n  public static getInstance\\(\\): \\1 \\{[\\s\\S]*?    return instance;\\n  \\}\\n`,
+      'g',
+    );
+    newContent = newContent.replace(generatedApiSingletonRegex, '@singleton()\nexport class $1 extends $2 {\n');
 
     // get all matches of:
     // "export type (\w)" and "export interface (\w)" and prefix all occurrences of the captured word with the api prefix, do this once per captured word
@@ -259,6 +259,9 @@ export const sanitizeApiTs = (apiTsPath: string, appType: APP): void => {
     const capturedWords = new Set<string>();
     for (const match of matches) {
       const capturedWord = match[2];
+      if (capturedWord.startsWith(apiPrefix)) {
+        continue;
+      }
       if (!capturedWords.has(capturedWord)) {
         // Use negative lookbehind/lookahead to avoid replacing:
         // - string literal values: 'UploadCasesCommand'
