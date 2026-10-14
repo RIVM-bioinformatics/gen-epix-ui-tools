@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.3.0](https://github.com/RIVM-bioinformatics/gen-epix-ui-tools/compare/merge-locales-v0.2.0...merge-locales-v0.3.0) (2026-10-14)
+
+
+### Features
+
+* upgrade dependences ([762e895](https://github.com/RIVM-bioinformatics/gen-epix-ui-tools/commit/762e8957975dd19952e4aba92e0aae38e7e467df))
+* use tsyringe to generate api ([762e895](https://github.com/RIVM-bioinformatics/gen-epix-ui-tools/commit/762e8957975dd19952e4aba92e0aae38e7e467df))
+
 ## [0.2.0](https://github.com/RIVM-bioinformatics/gen-epix-ui-tools/compare/merge-locales-v0.1.2...merge-locales-v0.2.0) (2026-09-21)
 
 

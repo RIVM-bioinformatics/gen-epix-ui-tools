@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.7.0](https://github.com/RIVM-bioinformatics/gen-epix-ui-tools/compare/oidc-mock-server-v0.6.0...oidc-mock-server-v0.7.0) (2026-10-14)
+
+
+### Features
+
+* upgrade dependences ([762e895](https://github.com/RIVM-bioinformatics/gen-epix-ui-tools/commit/762e8957975dd19952e4aba92e0aae38e7e467df))
+* use tsyringe to generate api ([762e895](https://github.com/RIVM-bioinformatics/gen-epix-ui-tools/commit/762e8957975dd19952e4aba92e0aae38e7e467df))
+
 ## [0.6.0](https://github.com/RIVM-bioinformatics/gen-epix-ui-tools/compare/oidc-mock-server-v0.5.2...oidc-mock-server-v0.6.0) (2026-09-21)
 
 

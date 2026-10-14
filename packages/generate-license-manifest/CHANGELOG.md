@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.5.0](https://github.com/RIVM-bioinformatics/gen-epix-ui-tools/compare/generate-license-manifest-v0.4.0...generate-license-manifest-v0.5.0) (2026-10-14)
+
+
+### Features
+
+* upgrade dependences ([762e895](https://github.com/RIVM-bioinformatics/gen-epix-ui-tools/commit/762e8957975dd19952e4aba92e0aae38e7e467df))
+* use tsyringe to generate api ([762e895](https://github.com/RIVM-bioinformatics/gen-epix-ui-tools/commit/762e8957975dd19952e4aba92e0aae38e7e467df))
+
 ## [0.4.0](https://github.com/RIVM-bioinformatics/gen-epix-ui-tools/compare/generate-license-manifest-v0.3.2...generate-license-manifest-v0.4.0) (2026-09-21)
 
 
