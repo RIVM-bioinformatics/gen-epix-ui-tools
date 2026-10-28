@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.4.0](https://github.com/RIVM-bioinformatics/gen-epix-ui-tools/compare/generate-common-api-v0.3.0...generate-common-api-v0.4.0) (2026-10-28)
+
+
+### Features
+
+* update dependencies to latest ([3aab88b](https://github.com/RIVM-bioinformatics/gen-epix-ui-tools/commit/3aab88b968fe302994a07dbb7b05eb074168c560))
+
+
+### Bug Fixes
+
+* **api-generator:** sort commandname properties sorting ([e6e3c26](https://github.com/RIVM-bioinformatics/gen-epix-ui-tools/commit/e6e3c2613876123c458a6d551cb25636fcd23ded))
+
 ## [0.3.0](https://github.com/RIVM-bioinformatics/gen-epix-ui-tools/compare/generate-common-api-v0.2.0...generate-common-api-v0.3.0) (2026-10-14)
 
 
