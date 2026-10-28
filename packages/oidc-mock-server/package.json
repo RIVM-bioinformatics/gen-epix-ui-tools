@@ -28,16 +28,16 @@
   "dependencies": {
     "@gen-epix/tools-lib": "workspace:^",
     "basic-auth": "3.0.0",
-    "oauth2-mock-server": "9.2.0"
+    "oauth2-mock-server": "9.3.0"
   },
   "devDependencies": {
     "@gen-epix/eslint-config": "workspace:^",
     "@types/basic-auth": "1.1.8",
     "@types/node": "26.6.5",
-    "eslint": "10.12.0",
+    "eslint": "10.13.0",
     "nodemon": "3.1.14",
     "rimraf": "6.1.3",
-    "rollup": "4.64.6",
+    "rollup": "4.65.1",
     "rollup-plugin-esbuild": "6.2.1",
     "typescript": "6.0.3"
   }
