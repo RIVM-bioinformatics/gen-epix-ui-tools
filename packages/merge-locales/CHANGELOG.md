@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.0](https://github.com/RIVM-bioinformatics/gen-epix-ui-tools/compare/merge-locales-v0.3.0...merge-locales-v0.4.0) (2026-10-28)
+
+
+### Features
+
+* update dependencies to latest ([3aab88b](https://github.com/RIVM-bioinformatics/gen-epix-ui-tools/commit/3aab88b968fe302994a07dbb7b05eb074168c560))
+
 ## [0.3.0](https://github.com/RIVM-bioinformatics/gen-epix-ui-tools/compare/merge-locales-v0.2.0...merge-locales-v0.3.0) (2026-10-14)
 
 
