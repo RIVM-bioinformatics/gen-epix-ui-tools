@@ -1102,7 +1102,18 @@ const renderDeclaration = (declaration: CommonDeclaration): string => {
 
   if (declaration.kind === 'enum') {
     const commonName = `${TARGET_PREFIX}${declaration.name}`;
-    const entries = declaration.entries.map(entry => `  ${entry.key}: ${entry.value},`).join('\n');
+    const enumEntries = declaration.name.endsWith('CommandName')
+      ? [...declaration.entries].sort((leftEntry, rightEntry) => {
+        if (leftEntry.key < rightEntry.key) {
+          return -1;
+        }
+        if (leftEntry.key > rightEntry.key) {
+          return 1;
+        }
+        return 0;
+      })
+      : declaration.entries;
+    const entries = enumEntries.map(entry => `  ${entry.key}: ${entry.value},`).join('\n');
 
     return `export const ${commonName} = {\n${entries}\n} as const;\n\nexport type ${commonName} = typeof ${commonName}[keyof typeof ${commonName}];`;
   }

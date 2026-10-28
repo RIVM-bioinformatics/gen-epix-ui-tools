@@ -216,6 +216,30 @@ export const sanitizeBaseTs = (baseTsPath: string, appType: APP): void => {
 `));
 };
 
+const sortCommandNameEnums = (content: string): string => {
+  const commandNameEnumRegex = /(export const \w*CommandName = \{\n)([\s\S]*?)(\n\s*\} as const;)/g;
+
+  return content.replace(
+    commandNameEnumRegex,
+    (_match, declarationStart: string, entries: string, declarationEnd: string) => {
+      const sortedEntries = entries.split('\n').sort((leftEntry, rightEntry) => {
+        const leftKey = leftEntry.trimStart().split(':', 1)[0];
+        const rightKey = rightEntry.trimStart().split(':', 1)[0];
+
+        if (leftKey < rightKey) {
+          return -1;
+        }
+        if (leftKey > rightKey) {
+          return 1;
+        }
+        return 0;
+      });
+
+      return `${declarationStart}${sortedEntries.join('\n')}${declarationEnd}`;
+    },
+  );
+};
+
 export const sanitizeApiTs = (apiTsPath: string, appType: APP): void => {
   const apiPrefix = appTypeToApiPrefix(appType);
 
@@ -273,6 +297,6 @@ import type { Configuration }`);
     }
 
 
-    return newContent;
+    return sortCommandNameEnums(newContent);
   });
 };
