@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.5.0](https://github.com/RIVM-bioinformatics/gen-epix-ui-tools/compare/generate-common-api-v0.4.0...generate-common-api-v0.5.0) (2026-11-12)
+
+
+### Features
+
+* upgrade all dependencies to latest (except typescript) ([b1602d8](https://github.com/RIVM-bioinformatics/gen-epix-ui-tools/commit/b1602d8d55e4bf1d9261e97e174d9e05e77d2851))
+
 ## [0.4.0](https://github.com/RIVM-bioinformatics/gen-epix-ui-tools/compare/generate-common-api-v0.3.0...generate-common-api-v0.4.0) (2026-10-28)
 
 
