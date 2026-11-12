@@ -48,6 +48,6 @@
   "devDependencies": {
     "eslint": "10.13.0",
     "eslint-plugin-import-x": "4.17.1",
-    "typescript": "6.0.3"
+    "typescript": "7.0.2"
   }
 }
