@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.10.0](https://github.com/RIVM-bioinformatics/gen-epix-ui-tools/compare/eslint-config-v0.9.0...eslint-config-v0.10.0) (2026-11-12)
+
+
+### Features
+
+* upgrade all dependencies to latest (except typescript) ([b1602d8](https://github.com/RIVM-bioinformatics/gen-epix-ui-tools/commit/b1602d8d55e4bf1d9261e97e174d9e05e77d2851))
+
 ## [0.9.0](https://github.com/RIVM-bioinformatics/gen-epix-ui-tools/compare/eslint-config-v0.8.0...eslint-config-v0.9.0) (2026-10-28)
 
 
